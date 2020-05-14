@@ -1,0 +1,24 @@
+/*
+ Localizable.strings
+ Pock
+ 
+ Created by Licardo on 2019/7/6.
+ Copyright © 2019 Pierluigi Galdi. All rights reserved.
+ */
+
+"Dock" = "Dock";
+"Unknown" = "Sconosciuto";
+"Never" = "Mai";
+"Instantly" = "Istanteneo";
+"1 second" = "1 secondo";
+"5 seconds" = "5 secondi";
+"10 seconds" = "10 secondi";
+"30 seconds" = "30 secondi";
+"1 minute" = "1 minuto";
+"3 minutes" = "3 minuti";
+"More Than 1 Window" = "Più Di 1 Finestra";
+"Always" = "Sempre";
+"windows" = "finestre";
+"Loading..." = "Caricamento...";
+"elements" = "elementi";
+"Trash" = "Cestino";

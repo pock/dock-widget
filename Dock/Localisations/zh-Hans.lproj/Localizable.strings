@@ -1,0 +1,24 @@
+/*
+ Localizable.strings
+ Pock
+ 
+ Created by Licardo on 2019/7/6.
+ Copyright © 2019 Pierluigi Galdi. All rights reserved.
+ */
+
+"Dock" = "程序坞";
+"Unknown" = "未知";
+"Never" = "永不";
+"Instantly" = "立即";
+"1 second" = "1 秒";
+"5 seconds" = "5 秒";
+"10 seconds" = "10 秒";
+"30 seconds" = "30 秒";
+"1 minute" = "1 分钟";
+"3 minutes" = "3 分钟";
+"More Than 1 Window" = "多于 1 个窗口";
+"Always" = "永远";
+"windows" = "个窗口";
+"Loading..." = "载入中...";
+"elements" = "个项目";
+"Trash" = "废纸篓";

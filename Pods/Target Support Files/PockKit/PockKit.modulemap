@@ -1,0 +1,6 @@
+framework module PockKit {
+  umbrella header "PockKit-umbrella.h"
+
+  export *
+  module * { export * }
+}

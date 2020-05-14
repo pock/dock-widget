@@ -7,14 +7,80 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		34AFC993246DC8E00068B3B6 /* DockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AFC992246DC8E00068B3B6 /* DockWidget.swift */; };
+		34D4A1BF246DE4FA005FA975 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34D4A1B7246DE4FA005FA975 /* Localizable.strings */; };
+		34DF322F246DCCE8009B46B9 /* DockItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3210246DCCE7009B46B9 /* DockItemView.swift */; };
+		34DF3230246DCCE8009B46B9 /* DockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3211246DCCE7009B46B9 /* DockWidget.swift */; };
+		34DF3231246DCCE8009B46B9 /* AppExposeItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3213246DCCE7009B46B9 /* AppExposeItem.swift */; };
+		34DF3232246DCCE8009B46B9 /* AppExposeController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34DF3215246DCCE7009B46B9 /* AppExposeController.xib */; };
+		34DF3233246DCCE8009B46B9 /* AppExposeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3216246DCCE7009B46B9 /* AppExposeController.swift */; };
+		34DF3234246DCCE8009B46B9 /* FileMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3217246DCCE8009B46B9 /* FileMonitor.swift */; };
+		34DF3235246DCCE8009B46B9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3218246DCCE8009B46B9 /* Constants.swift */; };
+		34DF3236246DCCE8009B46B9 /* FileEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF321A246DCCE8009B46B9 /* FileEvent.swift */; };
+		34DF3237246DCCE8009B46B9 /* EventStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF321B246DCCE8009B46B9 /* EventStream.swift */; };
+		34DF3238246DCCE8009B46B9 /* Witness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF321C246DCCE8009B46B9 /* Witness.swift */; };
+		34DF3239246DCCE8009B46B9 /* DockFolderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF321F246DCCE8009B46B9 /* DockFolderItem.swift */; };
+		34DF323A246DCCE8009B46B9 /* DockFolderController.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34DF3221246DCCE8009B46B9 /* DockFolderController.strings */; };
+		34DF323B246DCCE8009B46B9 /* DockFolderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3225246DCCE8009B46B9 /* DockFolderController.swift */; };
+		34DF323C246DCCE8009B46B9 /* DockFolderController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34DF3226246DCCE8009B46B9 /* DockFolderController.xib */; };
+		34DF323D246DCCE8009B46B9 /* DockFolderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF322A246DCCE8009B46B9 /* DockFolderRepository.swift */; };
+		34DF323E246DCCE8009B46B9 /* DockFolderItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF322C246DCCE8009B46B9 /* DockFolderItemView.swift */; };
+		34DF323F246DCCE8009B46B9 /* DockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF322D246DCCE8009B46B9 /* DockRepository.swift */; };
+		34DF3240246DCCE8009B46B9 /* DockItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF322E246DCCE8009B46B9 /* DockItem.swift */; };
+		34DF3244246DCDD9009B46B9 /* PockDockHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3243246DCDD8009B46B9 /* PockDockHelper.m */; };
+		34DF3253246DCECC009B46B9 /* DockWidgetPreferencePane.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34DF3249246DCECB009B46B9 /* DockWidgetPreferencePane.strings */; };
+		34DF3254246DCECC009B46B9 /* DockWidgetPreferencePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF324D246DCECB009B46B9 /* DockWidgetPreferencePane.swift */; };
+		34DF3255246DCECC009B46B9 /* DockWidgetPreferencePane.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34DF324E246DCECB009B46B9 /* DockWidgetPreferencePane.xib */; };
+		34DF3256246DCECC009B46B9 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3252246DCECB009B46B9 /* Preferences.swift */; };
+		54CD33931807DC25EE4C3A6B /* Pods_Dock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0D0E790B706AC130DEB3A405 /* Pods-Dock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dock.release.xcconfig"; path = "Target Support Files/Pods-Dock/Pods-Dock.release.xcconfig"; sourceTree = "<group>"; };
+		1177E54C6982D8AD0A82259D /* Pods-Dock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dock.debug.xcconfig"; path = "Target Support Files/Pods-Dock/Pods-Dock.debug.xcconfig"; sourceTree = "<group>"; };
 		34AFC98D246DC8E00068B3B6 /* Dock.pock */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dock.pock; sourceTree = BUILT_PRODUCTS_DIR; };
-		34AFC990246DC8E00068B3B6 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; };
-		34AFC992246DC8E00068B3B6 /* DockWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockWidget.swift; sourceTree = "<group>"; };
+		34AFC990246DC8E00068B3B6 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		34AFC994246DC8E00068B3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		34D4A1B8246DE4FA005FA975 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		34D4A1B9246DE4FA005FA975 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		34D4A1BA246DE4FA005FA975 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		34D4A1BB246DE4FA005FA975 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		34D4A1BC246DE4FA005FA975 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		34D4A1BD246DE4FA005FA975 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		34DF3210246DCCE7009B46B9 /* DockItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockItemView.swift; sourceTree = "<group>"; };
+		34DF3211246DCCE7009B46B9 /* DockWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockWidget.swift; sourceTree = "<group>"; };
+		34DF3213246DCCE7009B46B9 /* AppExposeItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppExposeItem.swift; sourceTree = "<group>"; };
+		34DF3215246DCCE7009B46B9 /* AppExposeController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AppExposeController.xib; sourceTree = "<group>"; };
+		34DF3216246DCCE7009B46B9 /* AppExposeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppExposeController.swift; sourceTree = "<group>"; };
+		34DF3217246DCCE8009B46B9 /* FileMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileMonitor.swift; sourceTree = "<group>"; };
+		34DF3218246DCCE8009B46B9 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		34DF321A246DCCE8009B46B9 /* FileEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileEvent.swift; sourceTree = "<group>"; };
+		34DF321B246DCCE8009B46B9 /* EventStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventStream.swift; sourceTree = "<group>"; };
+		34DF321C246DCCE8009B46B9 /* Witness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Witness.swift; sourceTree = "<group>"; };
+		34DF321D246DCCE8009B46B9 /* Witness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Witness.h; sourceTree = "<group>"; };
+		34DF321F246DCCE8009B46B9 /* DockFolderItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockFolderItem.swift; sourceTree = "<group>"; };
+		34DF3222246DCCE8009B46B9 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/DockFolderController.strings"; sourceTree = "<group>"; };
+		34DF3223246DCCE8009B46B9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/DockFolderController.strings; sourceTree = "<group>"; };
+		34DF3224246DCCE8009B46B9 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/DockFolderController.strings; sourceTree = "<group>"; };
+		34DF3225246DCCE8009B46B9 /* DockFolderController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockFolderController.swift; sourceTree = "<group>"; };
+		34DF3227246DCCE8009B46B9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DockFolderController.xib; sourceTree = "<group>"; };
+		34DF3228246DCCE8009B46B9 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/DockFolderController.strings"; sourceTree = "<group>"; };
+		34DF3229246DCCE8009B46B9 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/DockFolderController.strings; sourceTree = "<group>"; };
+		34DF322A246DCCE8009B46B9 /* DockFolderRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockFolderRepository.swift; sourceTree = "<group>"; };
+		34DF322C246DCCE8009B46B9 /* DockFolderItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockFolderItemView.swift; sourceTree = "<group>"; };
+		34DF322D246DCCE8009B46B9 /* DockRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockRepository.swift; sourceTree = "<group>"; };
+		34DF322E246DCCE8009B46B9 /* DockItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockItem.swift; sourceTree = "<group>"; };
+		34DF3242246DCDD8009B46B9 /* PockDockHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PockDockHelper.h; sourceTree = "<group>"; };
+		34DF3243246DCDD8009B46B9 /* PockDockHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PockDockHelper.m; sourceTree = "<group>"; };
+		34DF3246246DCE2C009B46B9 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		34DF324A246DCECB009B46B9 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/DockWidgetPreferencePane.strings"; sourceTree = "<group>"; };
+		34DF324B246DCECB009B46B9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/DockWidgetPreferencePane.strings; sourceTree = "<group>"; };
+		34DF324C246DCECB009B46B9 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/DockWidgetPreferencePane.strings; sourceTree = "<group>"; };
+		34DF324D246DCECB009B46B9 /* DockWidgetPreferencePane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockWidgetPreferencePane.swift; sourceTree = "<group>"; };
+		34DF324F246DCECB009B46B9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DockWidgetPreferencePane.xib; sourceTree = "<group>"; };
+		34DF3250246DCECB009B46B9 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/DockWidgetPreferencePane.strings"; sourceTree = "<group>"; };
+		34DF3251246DCECB009B46B9 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/DockWidgetPreferencePane.strings; sourceTree = "<group>"; };
+		34DF3252246DCECB009B46B9 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -22,6 +88,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				54CD33931807DC25EE4C3A6B /* Pods_Dock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +100,8 @@
 			children = (
 				34AFC98F246DC8E00068B3B6 /* Dock */,
 				34AFC98E246DC8E00068B3B6 /* Products */,
+				C06F4B4CB02532011247AF5A /* Pods */,
+				A207221C2E07CE53C611D88F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -50,6 +119,7 @@
 				34AFC990246DC8E00068B3B6 /* Podfile */,
 				34AFC994246DC8E00068B3B6 /* Info.plist */,
 				34AFC991246DC8E00068B3B6 /* Sources */,
+				34D4A1B6246DE4FA005FA975 /* Localisations */,
 			);
 			path = Dock;
 			sourceTree = "<group>";
@@ -57,9 +127,139 @@
 		34AFC991246DC8E00068B3B6 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				34AFC992246DC8E00068B3B6 /* DockWidget.swift */,
+				34DF3219246DCCE8009B46B9 /* Witness */,
+				34DF321E246DCCE8009B46B9 /* DockFolder */,
+				34DF3212246DCCE7009B46B9 /* AppExpose */,
+				34DF3218246DCCE8009B46B9 /* Constants.swift */,
+				34DF322E246DCCE8009B46B9 /* DockItem.swift */,
+				34DF3210246DCCE7009B46B9 /* DockItemView.swift */,
+				34DF322D246DCCE8009B46B9 /* DockRepository.swift */,
+				34DF3211246DCCE7009B46B9 /* DockWidget.swift */,
+				34DF3217246DCCE8009B46B9 /* FileMonitor.swift */,
+				34DF3246246DCE2C009B46B9 /* Bridging-Header.h */,
+				34DF3247246DCECB009B46B9 /* Preferences */,
+				34DF3245246DCDDD009B46B9 /* Helpers */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		34D4A1B6246DE4FA005FA975 /* Localisations */ = {
+			isa = PBXGroup;
+			children = (
+				34D4A1B7246DE4FA005FA975 /* Localizable.strings */,
+			);
+			path = Localisations;
+			sourceTree = "<group>";
+		};
+		34DF3212246DCCE7009B46B9 /* AppExpose */ = {
+			isa = PBXGroup;
+			children = (
+				34DF3214246DCCE7009B46B9 /* AppExposeController */,
+				34DF3213246DCCE7009B46B9 /* AppExposeItem.swift */,
+			);
+			path = AppExpose;
+			sourceTree = "<group>";
+		};
+		34DF3214246DCCE7009B46B9 /* AppExposeController */ = {
+			isa = PBXGroup;
+			children = (
+				34DF3215246DCCE7009B46B9 /* AppExposeController.xib */,
+				34DF3216246DCCE7009B46B9 /* AppExposeController.swift */,
+			);
+			path = AppExposeController;
+			sourceTree = "<group>";
+		};
+		34DF3219246DCCE8009B46B9 /* Witness */ = {
+			isa = PBXGroup;
+			children = (
+				34DF321A246DCCE8009B46B9 /* FileEvent.swift */,
+				34DF321B246DCCE8009B46B9 /* EventStream.swift */,
+				34DF321C246DCCE8009B46B9 /* Witness.swift */,
+				34DF321D246DCCE8009B46B9 /* Witness.h */,
+			);
+			path = Witness;
+			sourceTree = "<group>";
+		};
+		34DF321E246DCCE8009B46B9 /* DockFolder */ = {
+			isa = PBXGroup;
+			children = (
+				34DF3220246DCCE8009B46B9 /* DockFolderController */,
+				34DF322B246DCCE8009B46B9 /* DockFolderItemView */,
+				34DF321F246DCCE8009B46B9 /* DockFolderItem.swift */,
+				34DF322A246DCCE8009B46B9 /* DockFolderRepository.swift */,
+			);
+			path = DockFolder;
+			sourceTree = "<group>";
+		};
+		34DF3220246DCCE8009B46B9 /* DockFolderController */ = {
+			isa = PBXGroup;
+			children = (
+				34DF3221246DCCE8009B46B9 /* DockFolderController.strings */,
+				34DF3225246DCCE8009B46B9 /* DockFolderController.swift */,
+				34DF3226246DCCE8009B46B9 /* DockFolderController.xib */,
+			);
+			path = DockFolderController;
+			sourceTree = "<group>";
+		};
+		34DF322B246DCCE8009B46B9 /* DockFolderItemView */ = {
+			isa = PBXGroup;
+			children = (
+				34DF322C246DCCE8009B46B9 /* DockFolderItemView.swift */,
+			);
+			path = DockFolderItemView;
+			sourceTree = "<group>";
+		};
+		34DF3241246DCDD8009B46B9 /* PockDockHelper */ = {
+			isa = PBXGroup;
+			children = (
+				34DF3242246DCDD8009B46B9 /* PockDockHelper.h */,
+				34DF3243246DCDD8009B46B9 /* PockDockHelper.m */,
+			);
+			path = PockDockHelper;
+			sourceTree = "<group>";
+		};
+		34DF3245246DCDDD009B46B9 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				34DF3241246DCDD8009B46B9 /* PockDockHelper */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		34DF3247246DCECB009B46B9 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				34DF3248246DCECB009B46B9 /* DockWidgetPreferencePane */,
+				34DF3252246DCECB009B46B9 /* Preferences.swift */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
+		34DF3248246DCECB009B46B9 /* DockWidgetPreferencePane */ = {
+			isa = PBXGroup;
+			children = (
+				34DF3249246DCECB009B46B9 /* DockWidgetPreferencePane.strings */,
+				34DF324D246DCECB009B46B9 /* DockWidgetPreferencePane.swift */,
+				34DF324E246DCECB009B46B9 /* DockWidgetPreferencePane.xib */,
+			);
+			path = DockWidgetPreferencePane;
+			sourceTree = "<group>";
+		};
+		A207221C2E07CE53C611D88F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C06F4B4CB02532011247AF5A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1177E54C6982D8AD0A82259D /* Pods-Dock.debug.xcconfig */,
+				0D0E790B706AC130DEB3A405 /* Pods-Dock.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -69,6 +269,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 34AFC997246DC8E00068B3B6 /* Build configuration list for PBXNativeTarget "Dock" */;
 			buildPhases = (
+				C44FAF037AD2D66BDB3B25EE /* [CP] Check Pods Manifest.lock */,
 				34AFC988246DC8E00068B3B6 /* Sources */,
 				34AFC989246DC8E00068B3B6 /* Frameworks */,
 				34AFC98A246DC8E00068B3B6 /* Resources */,
@@ -95,6 +296,7 @@
 				TargetAttributes = {
 					34AFC98C246DC8E00068B3B6 = {
 						CreatedOnToolsVersion = 11.0;
+						LastSwiftMigration = 1100;
 					};
 				};
 			};
@@ -105,6 +307,11 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
+				it,
+				"zh-Hant",
+				tr,
+				de,
 			);
 			mainGroup = 34AFC983246DC8E00068B3B6;
 			productRefGroup = 34AFC98E246DC8E00068B3B6 /* Products */;
@@ -121,6 +328,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34DF3253246DCECC009B46B9 /* DockWidgetPreferencePane.strings in Resources */,
+				34D4A1BF246DE4FA005FA975 /* Localizable.strings in Resources */,
+				34DF323C246DCCE8009B46B9 /* DockFolderController.xib in Resources */,
+				34DF3232246DCCE8009B46B9 /* AppExposeController.xib in Resources */,
+				34DF3255246DCECC009B46B9 /* DockWidgetPreferencePane.xib in Resources */,
+				34DF323A246DCCE8009B46B9 /* DockFolderController.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,6 +358,28 @@
 			shellPath = /bin/sh;
 			shellScript = "# Copy widget to destination folder.\necho \"Copying ${PRODUCT_NAME}.pock to destination folder\"\ncp -r $TARGET_BUILD_DIR/$PRODUCT_NAME.pock ~/Library/Application\\ Support/Pock/Widgets/";
 		};
+		C44FAF037AD2D66BDB3B25EE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Dock-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -152,11 +387,84 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34AFC993246DC8E00068B3B6 /* DockWidget.swift in Sources */,
+				34DF3231246DCCE8009B46B9 /* AppExposeItem.swift in Sources */,
+				34DF3233246DCCE8009B46B9 /* AppExposeController.swift in Sources */,
+				34DF3237246DCCE8009B46B9 /* EventStream.swift in Sources */,
+				34DF3234246DCCE8009B46B9 /* FileMonitor.swift in Sources */,
+				34DF3230246DCCE8009B46B9 /* DockWidget.swift in Sources */,
+				34DF323B246DCCE8009B46B9 /* DockFolderController.swift in Sources */,
+				34DF323D246DCCE8009B46B9 /* DockFolderRepository.swift in Sources */,
+				34DF322F246DCCE8009B46B9 /* DockItemView.swift in Sources */,
+				34DF3256246DCECC009B46B9 /* Preferences.swift in Sources */,
+				34DF323F246DCCE8009B46B9 /* DockRepository.swift in Sources */,
+				34DF3244246DCDD9009B46B9 /* PockDockHelper.m in Sources */,
+				34DF3240246DCCE8009B46B9 /* DockItem.swift in Sources */,
+				34DF3235246DCCE8009B46B9 /* Constants.swift in Sources */,
+				34DF3238246DCCE8009B46B9 /* Witness.swift in Sources */,
+				34DF323E246DCCE8009B46B9 /* DockFolderItemView.swift in Sources */,
+				34DF3254246DCECC009B46B9 /* DockWidgetPreferencePane.swift in Sources */,
+				34DF3236246DCCE8009B46B9 /* FileEvent.swift in Sources */,
+				34DF3239246DCCE8009B46B9 /* DockFolderItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		34D4A1B7246DE4FA005FA975 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34D4A1B8246DE4FA005FA975 /* de */,
+				34D4A1B9246DE4FA005FA975 /* zh-Hans */,
+				34D4A1BA246DE4FA005FA975 /* en */,
+				34D4A1BB246DE4FA005FA975 /* it */,
+				34D4A1BC246DE4FA005FA975 /* zh-Hant */,
+				34D4A1BD246DE4FA005FA975 /* tr */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		34DF3221246DCCE8009B46B9 /* DockFolderController.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34DF3222246DCCE8009B46B9 /* zh-Hans */,
+				34DF3223246DCCE8009B46B9 /* en */,
+				34DF3224246DCCE8009B46B9 /* it */,
+				34DF3228246DCCE8009B46B9 /* zh-Hant */,
+				34DF3229246DCCE8009B46B9 /* tr */,
+			);
+			name = DockFolderController.strings;
+			sourceTree = "<group>";
+		};
+		34DF3226246DCCE8009B46B9 /* DockFolderController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34DF3227246DCCE8009B46B9 /* Base */,
+			);
+			name = DockFolderController.xib;
+			sourceTree = "<group>";
+		};
+		34DF3249246DCECB009B46B9 /* DockWidgetPreferencePane.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34DF324A246DCECB009B46B9 /* zh-Hans */,
+				34DF324B246DCECB009B46B9 /* en */,
+				34DF324C246DCECB009B46B9 /* it */,
+				34DF3250246DCECB009B46B9 /* zh-Hant */,
+				34DF3251246DCECB009B46B9 /* tr */,
+			);
+			name = DockWidgetPreferencePane.strings;
+			sourceTree = "<group>";
+		};
+		34DF324E246DCECB009B46B9 /* DockWidgetPreferencePane.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34DF324F246DCECB009B46B9 /* Base */,
+			);
+			name = DockWidgetPreferencePane.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		34AFC995246DC8E00068B3B6 /* Debug */ = {
@@ -270,15 +578,25 @@
 		};
 		34AFC998246DC8E00068B3B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1177E54C6982D8AD0A82259D /* Pods-Dock.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 788D9WZ9Z3;
 				INFOPLIST_FILE = Dock/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application\\ Support/Pock/Widgets";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pigigaldi.pock.Dock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Dock/Sources/Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = pock;
 			};
@@ -286,15 +604,24 @@
 		};
 		34AFC999246DC8E00068B3B6 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0D0E790B706AC130DEB3A405 /* Pods-Dock.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 788D9WZ9Z3;
 				INFOPLIST_FILE = Dock/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application\\ Support/Pock/Widgets";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pigigaldi.pock.Dock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Dock/Sources/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = pock;
 			};

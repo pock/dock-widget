@@ -24,5 +24,7 @@
 	<string>Dock.DockWidget</string>
 	<key>PKWidgetAuthor</key>
 	<string>Pierluigi Galdi</string>
+	<key>PKWidgetPreferenceClass</key>
+	<string>Dock.DockWidgetPreferencePane</string>
 </dict>
 </plist>
