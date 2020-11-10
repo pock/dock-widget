@@ -17,6 +17,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     @IBOutlet weak var appExposeSettingsPicker:            NSPopUpButton!
     @IBOutlet weak var hideFinderCheckbox:                 NSButton!
     @IBOutlet weak var showOnlyRunningApps:                NSButton!
+	@IBOutlet weak var hideRunningIndicator:			   NSButton!
     @IBOutlet weak var hideTrashCheckbox:                  NSButton!
     @IBOutlet weak var hidePersistentItemsCheckbox:        NSButton!
     @IBOutlet weak var openFinderInsidePockCheckbox:       NSButton!
@@ -56,6 +57,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     private func setupCheckboxes() {
         self.hideFinderCheckbox.state           = Defaults[.hideFinder]           ? .on : .off
         self.showOnlyRunningApps.state          = Defaults[.showOnlyRunningApps]  ? .on : .off
+		self.hideRunningIndicator.state			= Defaults[.hideRunningIndicator] ? .on : .off
         self.hideTrashCheckbox.state            = Defaults[.hideTrash]            ? .on : .off
         self.hidePersistentItemsCheckbox.state  = Defaults[.hidePersistentItems]  ? .on : .off
         self.openFinderInsidePockCheckbox.state = Defaults[.openFinderInsidePock] ? .on : .off
@@ -80,6 +82,12 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
         Defaults[.showOnlyRunningApps] = button.state == .on
         NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, object: nil)
     }
+	
+	@IBAction private func didChangeHideRunningIndicatorValue(button: NSButton) {
+		Defaults[.hideRunningIndicator] = button.state == .on
+		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, 	  object: nil)
+		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDockLayout, object: nil)
+	}
     
     @IBAction private func didChangeHideTrashValue(button: NSButton) {
         Defaults[.hideTrash] = button.state == .on

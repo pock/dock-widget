@@ -75,6 +75,7 @@ extension Defaults.Keys {
     static let itemSpacing                      = Defaults.Key<Int>("itemSpacing",             default: 8)
     static let hideFinder                       = Defaults.Key<Bool>("hideFinder",             default: false)
     static let showOnlyRunningApps              = Defaults.Key<Bool>("showOnlyRunningApps",    default: false)
+	static let hideRunningIndicator				= Defaults.Key<Bool>("hideRunningIndicator",   default: false)
     static let hideTrash                        = Defaults.Key<Bool>("hideTrash",              default: false)
     static let hidePersistentItems              = Defaults.Key<Bool>("hidePersistentItems",    default: false)
     static let openFinderInsidePock             = Defaults.Key<Bool>("openFinderInsidePock",   default: true)

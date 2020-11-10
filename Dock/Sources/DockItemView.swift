@@ -8,6 +8,7 @@
 
 import Foundation
 import SnapKit
+import Defaults
 
 class DockItemView: NSScrubberItemView {
     
@@ -124,7 +125,7 @@ class DockItemView: NSScrubberItemView {
     
     public func set(isRunning: Bool) {
         if dotView == nil { loadDotView() }
-        dotView.layer?.opacity = isRunning ? 1 : 0
+		dotView.layer?.opacity = isRunning && !Defaults[.hideRunningIndicator] ? 1 : 0
     }
     public var isRunning: Bool { return dotView.layer?.opacity == 1 }
     

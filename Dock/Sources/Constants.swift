@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Defaults
 
 class Constants {
     /// Known identifiers
@@ -16,8 +17,13 @@ class Constants {
     static let trashPath = NSHomeDirectory().appending("/.Trash")
     /// UI
     static let dockItemSize:            NSSize  = NSSize(width: 40, height: 30)
-    static let dockItemIconSize:        NSSize  = NSSize(width: 24, height: 24)
-    static let dockItemDotSize:         NSSize  = NSSize(width: 3,  height: 3)
+	static var dockItemIconSize:        NSSize {
+		let val = Defaults[.hideRunningIndicator] ? 27 : 24
+		return NSSize(width: val, height: val)
+	}
+	static var dockItemDotSize:         NSSize {
+		return Defaults[.hideRunningIndicator] ? .zero : NSSize(width: 3,  height: 3)
+	}
     static let dockItemBadgeSize:       NSSize  = NSSize(width: 10, height: 10)
     static let dockItemCornerRadius:    CGFloat = 6
     static let dockItemBounceThreshold: CGFloat = 10

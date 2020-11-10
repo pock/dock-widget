@@ -68,6 +68,7 @@ class DockWidget: NSObject, PKWidget {
     }
     
     @objc private func reloadDockScrubberLayout() {
+		cachedItemViews.removeAll()
         let dockLayout              = NSScrubberFlowLayout()
         dockLayout.itemSize         = Constants.dockItemSize
         dockLayout.itemSpacing      = CGFloat(Defaults[.itemSpacing])
