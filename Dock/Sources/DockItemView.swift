@@ -18,11 +18,11 @@ class DockItemView: NSScrubberItemView {
 	private var isMouseOver: Bool = false
     
     /// UI
-    private var contentView:    NSView!
-    private var frontmostView:  NSView!
-    private var iconView:       NSImageView!
-    private var dotView:        NSView!
-    private var badgeView:      NSView!
+    public private(set) var contentView:   NSView!
+    public private(set) var frontmostView: NSView!
+    public private(set) var iconView:      NSImageView!
+    public private(set) var dotView:       NSView!
+    public private(set) var badgeView:     NSView!
     
     /// Load frontmost
     private func loadFrontmost() {

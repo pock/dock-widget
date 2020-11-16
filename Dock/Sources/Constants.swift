@@ -39,3 +39,11 @@ extension NSScrubber {
 		return scrubberLayout.scrubberContentSize
 	}
 }
+
+extension NSWindow {
+	public func centerHorizontally() {
+		if let screenSize = screen?.frame.size {
+			self.setFrameOrigin(NSPoint(x: (screenSize.width - frame.size.width) / 2, y: frame.origin.y))
+		}
+	}
+}

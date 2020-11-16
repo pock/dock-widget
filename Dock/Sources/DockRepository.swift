@@ -164,12 +164,12 @@ class DockRepository {
     private func loadPersistentApps() {
         /// Read data from Dock plist
         guard let dict = UserDefaults.standard.persistentDomain(forName: "com.apple.dock") else {
-            NSLog("[Pock]: Can't read Dock preferences file")
+            NSLog("[DockWidget]: Can't read Dock preferences file")
             return
         }
         /// Read persistent apps array
         guard let apps = dict["persistent-apps"] as? [[String: Any]] else {
-            NSLog("[Pock]: Can't get persistent apps")
+            NSLog("[DockWidget]: Can't get persistent apps")
             return
         }
         /// Empty array
@@ -177,11 +177,11 @@ class DockRepository {
         /// Iterate on apps
         for (index,app) in apps.enumerated() {
             /// Get data tile
-            guard let dataTile = app["tile-data"] as? [String: Any] else { NSLog("[Pock]: Can't get app tile-data"); continue }
+            guard let dataTile = app["tile-data"] as? [String: Any] else { NSLog("[DockWidget]: Can't get app tile-data"); continue }
             /// Get app's label
-            guard let label = dataTile["file-label"] as? String else { NSLog("[Pock]: Can't get app label"); continue }
+            guard let label = dataTile["file-label"] as? String else { NSLog("[DockWidget]: Can't get app label"); continue }
             /// Get app's bundle identifier
-            guard let bundleIdentifier = dataTile["bundle-identifier"] as? String else { NSLog("[Pock]: Can't get app bundle identifier"); continue }
+            guard let bundleIdentifier = dataTile["bundle-identifier"] as? String else { NSLog("[DockWidget]: Can't get app bundle identifier"); continue }
             /// Check if item already exists
             if let item = dockItems.first(where: { $0.bundleIdentifier == bundleIdentifier }) {
                 persistentApps.append(item)
@@ -204,12 +204,12 @@ class DockRepository {
     private func loadPersistentItems() {
         /// Read data from Dock plist
         guard let dict = UserDefaults.standard.persistentDomain(forName: "com.apple.dock") else {
-            NSLog("[Pock]: Can't read Dock preferences file")
+            NSLog("[DockWidget]: Can't read Dock preferences file")
             return
         }
         /// Read persistent apps array
         guard let apps = dict["persistent-others"] as? [[String: Any]] else {
-            NSLog("[Pock]: Can't get persistent apps")
+            NSLog("[DockWidget]: Can't get persistent apps")
             return
         }
         /// Empty array
@@ -217,13 +217,13 @@ class DockRepository {
         /// Iterate on apps
         for (index,app) in apps.enumerated() {
             /// Get data tile
-            guard let dataTile = app["tile-data"] as? [String: Any] else { NSLog("[Pock]: Can't get file tile-data"); continue }
+            guard let dataTile = app["tile-data"] as? [String: Any] else { NSLog("[DockWidget]: Can't get file tile-data"); continue }
             /// Get app's label
-            guard let label = dataTile["file-label"] as? String else { NSLog("[Pock]: Can't get file label"); continue }
+            guard let label = dataTile["file-label"] as? String else { NSLog("[DockWidget]: Can't get file label"); continue }
             /// Get file data
-            guard let fileData = dataTile["file-data"] as? [String: Any] else { NSLog("[Pock]: Can't get file data"); continue }
+            guard let fileData = dataTile["file-data"] as? [String: Any] else { NSLog("[DockWidget]: Can't get file data"); continue }
             /// Get app's bundle identifier
-            guard let path = fileData["_CFURLString"] as? String else { NSLog("[Pock]: Can't get file path"); continue }
+            guard let path = fileData["_CFURLString"] as? String else { NSLog("[DockWidget]: Can't get file path"); continue }
             /// Create item
             let item = DockItem(index,
                                 nil,
@@ -436,7 +436,7 @@ extension DockRepository {
         /// Set timer
         self.notificationBadgeRefreshTimer = Timer.scheduledTimer(withTimeInterval: refreshRate.rawValue, repeats: true, block: {  [weak self] _ in
             /// Log
-            /// NSLog("[Pock]: Refreshing notification badge... (rate: %@)", refreshRate.toString())
+            /// NSLog("[DockWidget]: Refreshing notification badge... (rate: %@)", refreshRate.toString())
             /// Reload badge and running dot
             DispatchQueue.main.async { [weak self] in
                 self?.updateNotificationBadges()

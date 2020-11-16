@@ -110,7 +110,7 @@ extension DockFolderController: NSScrubberDelegate {
     func scrubber(_ scrubber: NSScrubber, didSelectItemAt selectedIndex: Int) {
         let item = elements[selectedIndex]
         dockFolderRepository.open(item: item) { success in
-            NSLog("[DockFolderController]: Did open: \(item.path?.path ?? "<unknown>") [success: \(success)]")
+            print("[DockWidget][DockFolderController]: Did open: \(item.path?.path ?? "<unknown>") [success: \(success)]")
         }
         scrubber.selectedIndex = -1
     }

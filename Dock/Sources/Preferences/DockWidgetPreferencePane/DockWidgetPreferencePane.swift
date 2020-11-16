@@ -21,6 +21,8 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     @IBOutlet weak var hideTrashCheckbox:                  NSButton!
     @IBOutlet weak var hidePersistentItemsCheckbox:        NSButton!
     @IBOutlet weak var openFinderInsidePockCheckbox:       NSButton!
+	@IBOutlet weak var hasMouseSupport:					   NSButton!
+	@IBOutlet weak var showCursor:						   NSButton!
     @IBOutlet weak var itemSpacingTextField:               NSTextField!
 
     /// Preferenceable
@@ -61,6 +63,8 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
         self.hideTrashCheckbox.state            = Defaults[.hideTrash]            ? .on : .off
         self.hidePersistentItemsCheckbox.state  = Defaults[.hidePersistentItems]  ? .on : .off
         self.openFinderInsidePockCheckbox.state = Defaults[.openFinderInsidePock] ? .on : .off
+		self.hasMouseSupport.state 				= Defaults[.hasMouseSupport] 	  ? .on : .off
+		self.showCursor.state 					= Defaults[.showCursor] 		  ? .on : .off
         self.hideTrashCheckbox.isEnabled        = !Defaults[.hidePersistentItems]
     }
 
@@ -103,6 +107,16 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     @IBAction private func didChangeOpenFinderInsidePockValue(button: NSButton) {
         Defaults[.openFinderInsidePock] = button.state == .on
     }
+	
+	@IBAction private func didChangeHasMouseSupportValue(button: NSButton) {
+		Defaults[.hasMouseSupport] = button.state == .on
+		showCursor.isEnabled = Defaults[.hasMouseSupport]
+		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScreenEdgeController, object: nil)
+	}
+	
+	@IBAction private func didChangeShowCursorValue(button: NSButton) {
+		Defaults[.showCursor] = button.state == .on
+	}
 }
 
 extension DockWidgetPreferencePane: NSTextFieldDelegate {

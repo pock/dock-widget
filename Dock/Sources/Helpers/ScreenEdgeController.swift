@@ -8,19 +8,16 @@
 
 import AppKit
 
-internal protocol ScreenEdgeDelegate {
+internal protocol ScreenEdgeDelegate: class {
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint?)
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint?)
 }
 
 internal class ScreenEdgeController: NSWindowController {
 	
-	/// Singleton
-	internal static let shared: ScreenEdgeController = ScreenEdgeController.setup()
-	
 	/// Core
 	private var trackingArea: NSTrackingArea?
-	internal var delegate: ScreenEdgeDelegate?
+	internal weak var delegate: ScreenEdgeDelegate?
 	internal var contentSize: CGFloat = NSScreen.screens.first?.frame.width ?? 0 {
 		didSet {
 			snapToScreenBottomEdge()
@@ -29,45 +26,49 @@ internal class ScreenEdgeController: NSWindowController {
 	
 	/// Data
 	private var screenBottomEdgeRect: NSRect {
-		return NSRect(x: window?.frame.origin.x ?? 0, y: 0, width: contentSize, height: 1)
+		return NSRect(x: window?.frame.origin.x ?? 0, y: 0, width: contentSize, height: 10)
 	}
 	
 	/// Deinit
 	deinit {
-		NotificationCenter.default.removeObserver(self)
-		if let trackingArea = trackingArea {
-			window?.contentView?.removeTrackingArea(trackingArea)
-		}
-		window?.close()
+		tearDown()
 	}
 	
 	/// Private initialiser
-	private static func setup() -> ScreenEdgeController {
+	internal convenience init(delegate: ScreenEdgeDelegate?) {
 		/// Create tracking window
 		let window: NSWindow? = NSWindow(contentRect: .zero, styleMask: .borderless, backing: .buffered, defer: true, screen: nil)
 		window?.collectionBehavior   = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
 		window?.isReleasedWhenClosed = true
 		window?.ignoresMouseEvents   = false
 		window?.hidesOnDeactivate    = false
-		window?.level 				 = .mainMenu
 		window?.canHide 		     = false
+		window?.level 				 = .mainMenu
 		window?.animationBehavior    = .none
 		window?.hasShadow  		= false
 		window?.isOpaque   		= false
-		window?.backgroundColor = .black
-		window?.alphaValue 		= 0
+		window?.backgroundColor = .red
+		window?.alphaValue 		= 1
 		/// Create controller
-		let controller = ScreenEdgeController(window: window)
+		self.init(window: window)
+		self.delegate = delegate
 		/// Register for notifications
-		NotificationCenter.default.addObserver(controller, selector: #selector(screenChanged(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(screenChanged(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
 		/// Setup window
-		window?.delegate = controller
-		controller.snapToScreenBottomEdge()
+		window?.delegate = self
+		self.snapToScreenBottomEdge()
 		window?.orderFrontRegardless()
 		/// Log
-		print("[DockWidget]: Setup ScreenEdgeController: \(controller) || \(window?.debugDescription ?? "unknown-window")")
-		/// Return controller
-		return controller
+		print("[DockWidget]: Setup ScreenEdgeController...")
+	}
+	
+	/// Tear down
+	public func tearDown() {
+		NotificationCenter.default.removeObserver(self)
+		if let trackingArea = trackingArea {
+			window?.contentView?.removeTrackingArea(trackingArea)
+		}
+		window?.close()
 	}
 	
 	/// Private methods
@@ -85,8 +86,7 @@ internal class ScreenEdgeController: NSWindowController {
 			return
 		}
 		window.setFrame(screenBottomEdgeRect, display: true, animate: false)
-		window.center()
-		window.setFrame(screenBottomEdgeRect, display: true, animate: false)
+		window.centerHorizontally()
 		trackingArea = NSTrackingArea(rect: window.contentView?.bounds ?? screenBottomEdgeRect, options: [.mouseEnteredAndExited, .mouseMoved, .activeAlways], owner: self, userInfo: nil)
 		window.contentView?.addTrackingArea(trackingArea!)
 	}
@@ -98,7 +98,6 @@ extension ScreenEdgeController: NSWindowDelegate {
 	
 	/// Mouse did enter in edge window
 	override func mouseEntered(with event: NSEvent) {
-		NSCursor.hide()
 		mouseMoved(with: event)
 	}
 	
@@ -118,17 +117,8 @@ extension ScreenEdgeController: NSWindowDelegate {
 		delegate.screenEdgeController(self, mouseClickAtLocation: event.locationInWindow)
 	}
 	
-	/// Did scroll/swipe in edge window
-	override func wantsScrollEventsForSwipeTracking(on axis: NSEvent.GestureAxis) -> Bool {
-		return axis == .horizontal
-	}
-	override func scrollWheel(with event: NSEvent) {
-		print("[DockWidget]: Scroll WHEEL at: \(event.locationInWindow)")
-	}
-	
 	/// Mouse did exit from edge window
 	override func mouseExited(with event: NSEvent) {
-		NSCursor.unhide()
 		delegate?.screenEdgeController(self, mouseMovedAtLocation: nil)
 	}
 }
