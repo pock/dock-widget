@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		347419112561B72500C2DD20 /* ScreenEdgeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347419102561B72500C2DD20 /* ScreenEdgeController.swift */; };
 		34D4A1BF246DE4FA005FA975 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34D4A1B7246DE4FA005FA975 /* Localizable.strings */; };
 		34DF322F246DCCE8009B46B9 /* DockItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3210246DCCE7009B46B9 /* DockItemView.swift */; };
 		34DF3230246DCCE8009B46B9 /* DockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3211246DCCE7009B46B9 /* DockWidget.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		0D0E790B706AC130DEB3A405 /* Pods-Dock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dock.release.xcconfig"; path = "Target Support Files/Pods-Dock/Pods-Dock.release.xcconfig"; sourceTree = "<group>"; };
 		1177E54C6982D8AD0A82259D /* Pods-Dock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dock.debug.xcconfig"; path = "Target Support Files/Pods-Dock/Pods-Dock.debug.xcconfig"; sourceTree = "<group>"; };
+		347419102561B72500C2DD20 /* ScreenEdgeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenEdgeController.swift; sourceTree = "<group>"; };
 		34AFC98D246DC8E00068B3B6 /* Dock.pock */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dock.pock; sourceTree = BUILT_PRODUCTS_DIR; };
 		34AFC990246DC8E00068B3B6 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		34AFC994246DC8E00068B3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				34DF3241246DCDD8009B46B9 /* PockDockHelper */,
+				347419102561B72500C2DD20 /* ScreenEdgeController.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -291,7 +294,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1100;
-				LastUpgradeCheck = 1100;
+				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "Pierluigi Galdi";
 				TargetAttributes = {
 					34AFC98C246DC8E00068B3B6 = {
@@ -390,6 +393,7 @@
 				34DF3231246DCCE8009B46B9 /* AppExposeItem.swift in Sources */,
 				34DF3233246DCCE8009B46B9 /* AppExposeController.swift in Sources */,
 				34DF3237246DCCE8009B46B9 /* EventStream.swift in Sources */,
+				347419112561B72500C2DD20 /* ScreenEdgeController.swift in Sources */,
 				34DF3234246DCCE8009B46B9 /* FileMonitor.swift in Sources */,
 				34DF3230246DCCE8009B46B9 /* DockWidget.swift in Sources */,
 				34DF323B246DCCE8009B46B9 /* DockFolderController.swift in Sources */,

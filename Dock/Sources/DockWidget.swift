@@ -17,7 +17,8 @@ class DockWidget: NSObject, PKWidget {
     var view: NSView!
     
     /// Core
-    private var dockRepository: DockRepository!
+    private var dockRepository:       DockRepository!
+	private let screenEdgeController: ScreenEdgeController = .shared
     
     /// UI
     private var stackView:          NSStackView! = NSStackView(frame: .zero)
@@ -29,7 +30,9 @@ class DockWidget: NSObject, PKWidget {
     /// Data
     private var dockItems:       [DockItem] = []
     private var persistentItems: [DockItem] = []
-    private var cachedItemViews: [Int: DockItemView] = [:]
+    private var cachedDockItemViews: 	   [Int: DockItemView] = [:]
+	private var cachedPersistentItemViews: [Int: DockItemView] = [:]
+	private var itemViewWithMouseOver: DockItemView?
     
     required override init() {
         super.init()
@@ -44,6 +47,7 @@ class DockWidget: NSObject, PKWidget {
         self.dockRepository.reload(nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(displayScrubbers), name: .shouldReloadPersistentItems, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadDockScrubberLayout), name: .shouldReloadDockLayout, object: nil)
+		self.screenEdgeController.delegate = self
     }
     
     deinit {
@@ -68,7 +72,8 @@ class DockWidget: NSObject, PKWidget {
     }
     
     @objc private func reloadDockScrubberLayout() {
-		cachedItemViews.removeAll()
+		cachedDockItemViews.removeAll()
+		cachedPersistentItemViews.removeAll()
         let dockLayout              = NSScrubberFlowLayout()
         dockLayout.itemSize         = Constants.dockItemSize
         dockLayout.itemSpacing      = CGFloat(Defaults[.itemSpacing])
@@ -145,12 +150,16 @@ extension DockWidget: DockDelegate {
     }
     
     @discardableResult
-    private func updateView(for item: DockItem?) -> DockItemView? {
+	private func updateView(for item: DockItem?, isPersistent: Bool) -> DockItemView? {
         guard let item = item else { return nil }
-        var view: DockItemView! = cachedItemViews[item.diffId]
+		var view: DockItemView! = isPersistent ? cachedPersistentItemViews[item.diffId] : cachedDockItemViews[item.diffId]
         if view == nil {
             view = DockItemView(frame: .zero)
-            cachedItemViews[item.diffId] = view
+			if isPersistent {
+				cachedPersistentItemViews[item.diffId] = view
+			}else {
+				cachedDockItemViews[item.diffId] = view
+			}
         }
         view.clear()
         view.set(icon:        item.icon)
@@ -166,19 +175,18 @@ extension DockWidget: DockDelegate {
             return
         }
         DispatchQueue.main.async { [weak self] in
-            completion?(newItems)
+			guard let self = self else {
+				return
+			}
+			completion?(newItems)
             scrubber.reloadData()
-            var toIndex = self?.lastVisibleRange.upperBound ?? 0
-            if scrubber.numberOfItems > 0 {
-                toIndex = toIndex >= scrubber.numberOfItems ? (scrubber.numberOfItems - 1) : toIndex
-                scrubber.scrollItem(at: toIndex < 0 ? 0 : toIndex, to: .none)
-            }
+			self.screenEdgeController.contentSize = self.dockScrubber.contentSize.width + self.persistentScrubber.contentSize.width
         }
     }
     func didUpdateBadge(for apps: [DockItem]) {
         DispatchQueue.main.async { [weak self] in
             guard let s = self else { return }
-            s.cachedItemViews.forEach({ key, view in
+            s.cachedDockItemViews.forEach({ key, view in
                 view.set(hasBadge: apps.first(where: { $0.diffId == key })?.hasBadge ?? false)
             })
         }
@@ -186,7 +194,7 @@ extension DockWidget: DockDelegate {
     func didUpdateRunningState(for apps: [DockItem]) {
         DispatchQueue.main.async { [weak self] in
             guard let s = self else { return }
-            s.cachedItemViews.forEach({ key, view in
+            s.cachedDockItemViews.forEach({ key, view in
                 let item = apps.first(where: { $0.diffId == key })
                 view.set(isRunning:   item?.isRunning   ?? false)
                 view.set(isFrontmost: item?.isFrontmost ?? false)
@@ -209,25 +217,85 @@ extension DockWidget: NSScrubberDataSource {
     }
     
     func scrubber(_ scrubber: NSScrubber, viewForItemAt index: Int) -> NSScrubberItemView {
-        let item = scrubber == persistentScrubber ? persistentItems[index] : dockItems[index]
-        return updateView(for: item)!
+        let isPersistent = scrubber == persistentScrubber
+		let item = isPersistent ? persistentItems[index] : dockItems[index]
+        return updateView(for: item, isPersistent: isPersistent)!
     }
 }
 
 extension DockWidget: NSScrubberDelegate {
     func scrubber(_ scrubber: NSScrubber, didSelectItemAt selectedIndex: Int) {
         let item = scrubber == persistentScrubber ? persistentItems[selectedIndex] : dockItems[selectedIndex]
-        var result: Bool = false
-        if item.bundleIdentifier?.lowercased() == "com.apple.finder" {
-            dockRepository.launch(bundleIdentifier: item.bundleIdentifier, completion: { result = $0 })
-        }else {
-            dockRepository.launch(item: item, completion: { result = $0 })
-        }
-        NSLog("[Pock]: Did open: \(item.bundleIdentifier ?? item.path?.absoluteString ?? "Unknown") [success: \(result)]")
+        launchItem(item)
         scrubber.selectedIndex = -1
     }
     
     func scrubber(_ scrubber: NSScrubber, didChangeVisibleRange visibleRange: NSRange) {
         lastVisibleRange = visibleRange
     }
+	
+	func launchItem(_ item: DockItem?) {
+		guard let item = item else {
+			return
+		}
+		var result: Bool = false
+		if item.bundleIdentifier?.lowercased() == "com.apple.finder" {
+			dockRepository.launch(bundleIdentifier: item.bundleIdentifier, completion: { result = $0 })
+		}else {
+			dockRepository.launch(item: item, completion: { result = $0 })
+		}
+		NSLog("[Pock]: Did open: \(item.bundleIdentifier ?? item.path?.absoluteString ?? "Unknown") [success: \(result)]")
+	}
+}
+
+extension DockWidget: ScreenEdgeDelegate {
+	
+	private func dockItemView(at point: NSPoint?) -> (item: DockItem, itemView: DockItemView)? {
+		if let point = point, let result = cachedDockItemViews.first(where: { $0.value.frame.contains(point) }) {
+			if let item = dockItems.first(where: { $0.diffId == result.key }) {
+				return (item, result.value)
+			}
+		}
+		return nil
+	}
+	
+	private func persistentItemView(at point: NSPoint?) -> (item: DockItem, itemView: DockItemView)? {
+		if let point = point, let result = cachedPersistentItemViews.first(where: { $0.value.frame.contains(point) }) {
+			if let item = persistentItems.first(where: { $0.diffId == result.key }) {
+				return (item, result.value)
+			}
+		}
+		return nil
+	}
+	
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint?) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		let adjustedLocation = dockScrubber.contentSize.width - (location?.x ?? 0)
+		if adjustedLocation > 0 {
+			itemViewWithMouseOver = dockItemView(at: location)?.itemView
+			if itemViewWithMouseOver != nil, let location = location {
+				let index = Int((location.x / dockScrubber.contentSize.width) * 10)
+				let adjust = dockItems.count > (index + 1) ? 1 : 0
+				dockScrubber.animator().scrollItem(at: index + adjust, to: .center)
+			}
+		}else {
+			itemViewWithMouseOver = persistentItemView(at: NSPoint(x: abs(adjustedLocation), y: 0))?.itemView
+		}
+		guard let itemView = itemViewWithMouseOver else {
+			return
+		}
+		itemView.set(isMouseOver: true)
+	}
+	
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint?) {
+		let item: DockItem?
+		let adjustedLocation = dockScrubber.contentSize.width - (location?.x ?? 0)
+		if adjustedLocation > 0 {
+			item = dockItemView(at: location)?.item
+		}else {
+			item = persistentItemView(at: NSPoint(x: abs(adjustedLocation), y: 0))?.item
+		}
+		print("[DockWidget]: CLICK => \(location?.debugDescription ?? "unknown-location") | \(item?.bundleIdentifier ?? item?.path?.absoluteString ?? "unknown")")
+		launchItem(item)
+	}
 }

@@ -33,3 +33,9 @@ class Constants {
     static let kAppExposeItemView:  NSUserInterfaceItemIdentifier = NSUserInterfaceItemIdentifier(rawValue: "kAppExposeItemView")
     static let kBounceAnimation:    String = "kBounceAnimation"
 }
+
+extension NSScrubber {
+	internal var contentSize: NSSize {
+		return scrubberLayout.scrubberContentSize
+	}
+}

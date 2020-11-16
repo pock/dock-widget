@@ -15,6 +15,7 @@ class DockItemView: NSScrubberItemView {
     /// Core
     private static let kBounceAnimationKey: String = "kBounceAnimationKey"
     private var isAnimating: Bool = false
+	private var isMouseOver: Bool = false
     
     /// UI
     private var contentView:    NSView!
@@ -134,6 +135,18 @@ class DockItemView: NSScrubberItemView {
         badgeView.layer?.opacity = hasBadge ? 1 : 0
     }
     public var hasBadge: Bool { return badgeView.layer?.opacity == 1 }
+	
+	public func set(isMouseOver: Bool) {
+		guard isMouseOver else {
+			iconView.shadow = nil
+			return
+		}
+		let shadow = NSShadow()
+		shadow.shadowBlurRadius = 5
+		shadow.shadowOffset		= NSSize(width: 0, height: -2.35)
+		shadow.shadowColor		= NSColor.white
+		iconView.shadow = shadow
+	}
     
 }
 

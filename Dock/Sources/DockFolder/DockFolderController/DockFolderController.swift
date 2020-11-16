@@ -69,7 +69,7 @@ extension DockFolderController {
     private func loadElements(reloadScrubber: Bool = true) {
         dockFolderRepository.getItems(in: folderUrl) { [weak self] elements in
             self?.elements = elements
-            self?.folderDetail.stringValue = "\(elements.count) " + "elements".localized
+            self?.folderDetail?.stringValue = "\(elements.count) " + "elements".localized
             if reloadScrubber { self?.scrubber.reloadData() }
         }
     }
