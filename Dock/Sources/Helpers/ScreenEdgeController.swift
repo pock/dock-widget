@@ -11,7 +11,7 @@ import AppKit
 internal protocol ScreenEdgeDelegate: class {
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint?)
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint)
-	func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat)
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint)
 }
 
 internal class ScreenEdgeController: NSWindowController {
@@ -42,21 +42,18 @@ internal class ScreenEdgeController: NSWindowController {
 		window?.collectionBehavior   	  = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
 		window?.isExcludedFromWindowsMenu = true
 		window?.isReleasedWhenClosed 	  = true
-		window?.acceptsMouseMovedEvents   = true
 		window?.ignoresMouseEvents   	  = false
 		window?.hidesOnDeactivate    	  = false
 		window?.canHide 		     	  = false
-		window?.level 				 	  = .screenSaver
+		window?.level 				 	  = .mainMenu
 		window?.animationBehavior    	  = .none
 		window?.hasShadow  				  = false
 		window?.isOpaque   				  = false
 		window?.backgroundColor 		  = .red
-		window?.alphaValue 				  = 1
+		window?.alphaValue 				  = 0
 		/// Create controller
 		self.init(window: window)
 		self.delegate = delegate
-		/// Register for notifications
-		NotificationCenter.default.addObserver(self, selector: #selector(screenChanged(_:)), name: NSApplication.didChangeScreenParametersNotification, object: nil)
 		/// Setup window
 		window?.orderFrontRegardless()
 		window?.delegate = self
@@ -67,17 +64,10 @@ internal class ScreenEdgeController: NSWindowController {
 	
 	/// Tear down
 	public func tearDown() {
-		NotificationCenter.default.removeObserver(self)
 		if let trackingArea = trackingArea {
 			window?.contentView?.removeTrackingArea(trackingArea)
 		}
 		window?.close()
-	}
-	
-	/// Private methods
-	@objc private func screenChanged(_ notification: NSNotification?) {
-		print("[DockWidget] Screen changed: \(notification?.debugDescription ?? "")")
-		// TODO: Implement
 	}
 	
 	private func snapToScreenBottomEdge() {
@@ -117,7 +107,7 @@ extension ScreenEdgeController: NSWindowDelegate {
 		guard let delegate = delegate else {
 			return
 		}
-		delegate.screenEdgeController(self, mouseScrollWithDelta: event.deltaX)
+		delegate.screenEdgeController(self, mouseScrollWithDelta: event.deltaX, atLocation: event.locationInWindow)
 	}
 	
 	/// Did click in edge window

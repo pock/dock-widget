@@ -28,14 +28,14 @@ class DockWidget: NSObject, PKWidget {
 	}
 	private var totalContentSizeWidth: CGFloat {
 		let max = NSScreen.main?.frame.width ?? CGFloat.greatestFiniteMagnitude
-		return min(dockContentSize + persistentContentSize, max)
+		return min(dockContentSize + persistentContentSize + (stackView.spacing * 2) + 8, max)
 	}
     
     /// UI
     private var stackView:          NSStackView! = NSStackView(frame: .zero)
-    private var dockScrubber:       NSScrubber! = NSScrubber(frame: NSRect(x: 0, y: 0, width: 200,  height: 30))
-    private var separator:          NSView! = NSView(frame:     NSRect(x: 0, y: 0, width: 1,    height: 20))
-    private var persistentScrubber: NSScrubber! = NSScrubber(frame: NSRect(x: 0, y: 0, width: 50,   height: 30))
+    private var dockScrubber:       NSScrubber!  = NSScrubber(frame: NSRect(x: 0, y: 0, width: 200, height: 30))
+    private var separator:          NSView! 	 = NSView(frame:     NSRect(x: 0, y: 0, width: 1, 	height: 20))
+    private var persistentScrubber: NSScrubber!  = NSScrubber(frame: NSRect(x: 0, y: 0, width: 50, 	height: 30))
 	private var cursorView:			NSView?
     
     /// Data
@@ -281,7 +281,6 @@ extension DockWidget: NSScrubberDelegate {
 extension DockWidget: ScreenEdgeDelegate {
 	
 	private func showCursor(at location: NSPoint?) {
-		itemViewWithMouseOver?.set(isMouseOver: false)
 		guard let location = location else {
 			cursorView?.removeFromSuperview()
 			cursorView = nil
@@ -300,19 +299,19 @@ extension DockWidget: ScreenEdgeDelegate {
 	
 	private func item(at location: NSPoint) -> DockItem? {
 		let loc = NSPoint(x: location.x + 6, y: 12)
-		guard let result = cachedDockItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
-			guard let result = cachedPersistentItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
+		guard let result = cachedPersistentItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
+			guard let result = cachedDockItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
 				return nil
 			}
-			return persistentItems.first(where: { $0.diffId == result.key })
+			return dockItems.first(where: { $0.diffId == result.key })
 		}
-		return dockItems.first(where: { $0.diffId == result.key })
+		return persistentItems.first(where: { $0.diffId == result.key })
 	}
 	
 	private func itemView(at location: NSPoint) -> DockItemView? {
 		let loc = NSPoint(x: location.x + 6, y: 12)
-		guard let result = cachedDockItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
-			guard let result = cachedPersistentItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
+		guard let result = cachedPersistentItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
+			guard let result = cachedDockItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
 				return nil
 			}
 			return result.value
@@ -321,18 +320,28 @@ extension DockWidget: ScreenEdgeDelegate {
 	}
 	
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint?) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
 		showCursor(at: location)
 	}
 	
-	func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat) {
-		guard Defaults[.showCursor] else {
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		guard let scrubber = (dockContentSize - location.x) > 0 ? dockScrubber : persistentScrubber,
+			  let clipView: NSClipView = scrubber.findViews().first,
+			  let scrollView: NSScrollView = scrubber.findViews().first else {
 			return
 		}
-		itemViewWithMouseOver?.set(isMouseOver: false)
-		print("[DockWidget]: SCROLL delta: \(delta)")
+		let maxWidth = scrubber.contentSize.width - scrubber.visibleRect.width
+		let newX     = clipView.bounds.origin.x - delta
+		if (-6...maxWidth+6).contains(newX) {
+			clipView.setBoundsOrigin(NSPoint(x: newX, y: clipView.bounds.origin.y))
+			scrollView.reflectScrolledClipView(clipView)
+		}
+		showCursor(at: location)
 	}
 	
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint) {
 		launchItem(item(at: location))
 	}
+	
 }

@@ -47,3 +47,12 @@ extension NSWindow {
 		}
 	}
 }
+
+extension NSView {
+	func findViews<T: NSView>(subclassOf: T.Type = T.self) -> [T] {
+		return recursiveSubviews.compactMap { $0 as? T }
+	}
+	var recursiveSubviews: [NSView] {
+		return subviews + subviews.flatMap { $0.recursiveSubviews }
+	}
+}
