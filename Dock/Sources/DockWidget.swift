@@ -20,20 +20,15 @@ class DockWidget: NSObject, PKWidget {
     private var dockRepository:       DockRepository!
 	private var screenEdgeController: ScreenEdgeController?
 	
-	private var dockMaxWidth: CGFloat {
-		if Defaults[.showCursor] {
-			return dockScrubber.visibleRect.width
-		}
-		return (Constants.dockItemSize.width + CGFloat(Defaults[.itemSpacing])) * CGFloat(dockItems.count)
+	private var dockContentSize: CGFloat {
+		return dockScrubber.visibleRect.width
 	}
-	private var persistentMaxWidth: CGFloat {
-		if Defaults[.showCursor] {
-			return persistentScrubber.visibleRect.width
-		}
-		return (Constants.dockItemSize.width + CGFloat(Defaults[.itemSpacing])) * CGFloat(persistentItems.count)
+	private var persistentContentSize: CGFloat {
+		return persistentScrubber.visibleRect.width
 	}
-	private var totalMaxWidth: CGFloat {
-		return min(dockMaxWidth + persistentMaxWidth, NSScreen.main?.frame.width ?? CGFloat.greatestFiniteMagnitude)
+	private var totalContentSizeWidth: CGFloat {
+		let max = NSScreen.main?.frame.width ?? CGFloat.greatestFiniteMagnitude
+		return min(dockContentSize + persistentContentSize, max)
 	}
     
     /// UI
@@ -61,7 +56,7 @@ class DockWidget: NSObject, PKWidget {
         self.dockRepository = DockRepository(delegate: self)
         self.dockRepository.reload(nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(displayScrubbers), 			 name: .shouldReloadPersistentItems, 	  object: nil)
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadDockScrubberLayout), 	 name: .shouldReloadDockLayout, 		  object: nil)
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadScrubbersLayout), 	 name: .shouldReloadScrubbersLayout, 	  object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadScreenEdgeController), name: .shouldReloadScreenEdgeController, object: nil)
 		self.reloadScreenEdgeController()
     }
@@ -71,7 +66,10 @@ class DockWidget: NSObject, PKWidget {
         dockScrubber        = nil
         separator           = nil
         persistentScrubber  = nil
+		cursorView			= nil
         dockRepository      = nil
+		itemViewWithMouseOver = nil
+		screenEdgeController = nil
         NSWorkspace.shared.notificationCenter.removeObserver(self)
     }
 	
@@ -92,17 +90,15 @@ class DockWidget: NSObject, PKWidget {
     }
 	
 	@objc private func reloadScreenEdgeController() {
-		if Defaults[.hasMouseSupport] && self.screenEdgeController == nil {
+		if Defaults[.hasMouseSupport] {
 			self.screenEdgeController = ScreenEdgeController(delegate: self)
-			self.screenEdgeController?.contentSize = self.totalMaxWidth
+			self.screenEdgeController?.contentSize = self.totalContentSizeWidth
 		}else {
 			self.screenEdgeController = nil
 		}
 	}
     
-    @objc private func reloadDockScrubberLayout() {
-		cachedDockItemViews.removeAll()
-		cachedPersistentItemViews.removeAll()
+    @objc private func reloadScrubbersLayout() {
         let dockLayout              = NSScrubberFlowLayout()
         dockLayout.itemSize         = Constants.dockItemSize
         dockLayout.itemSpacing      = CGFloat(Defaults[.itemSpacing])
@@ -209,7 +205,7 @@ extension DockWidget: DockDelegate {
 			}
 			completion?(newItems)
             scrubber.reloadData()
-			self.screenEdgeController?.contentSize = self.totalMaxWidth
+			self.screenEdgeController?.contentSize = self.totalContentSizeWidth
         }
     }
     func didUpdateBadge(for apps: [DockItem]) {
@@ -284,74 +280,59 @@ extension DockWidget: NSScrubberDelegate {
 
 extension DockWidget: ScreenEdgeDelegate {
 	
-	private func itemView(in superview: NSView, at location: NSPoint) -> DockItemView? {
-		let loc = NSPoint(x: location.x + CGFloat(Defaults[.itemSpacing]), y: 12)
-		guard let itemView = cachedDockItemViews.values.first(where: { $0.convert($0.iconView.frame, to: self.view).contains(loc) }) else {
-			return cachedPersistentItemViews.values.first(where: { $0.convert($0.iconView.frame, to: self.view).contains(loc) })
-		}
-		return itemView
-	}
-	
 	private func showCursor(at location: NSPoint?) {
-		guard Defaults[.showCursor], let location = location else {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		guard let location = location else {
 			cursorView?.removeFromSuperview()
 			cursorView = nil
 			return
 		}
-		if cursorView == nil {
-			cursorView = NSImageView(image: NSCursor.pointingHand.image)
-			view.addSubview(cursorView!)
+		if Defaults[.showCursor] {
+			if cursorView == nil {
+				cursorView = NSImageView(image: NSCursor.arrow.image)
+				view.addSubview(cursorView!)
+			}
+			cursorView?.frame = NSRect(x: location.x, y: location.y, width: 20, height: 20)
 		}
-		cursorView?.frame = NSRect(x: location.x, y: location.y, width: 26, height: 26)
-		itemViewWithMouseOver = itemView(in: view, at: location)
+		itemViewWithMouseOver = itemView(at: location)
 		itemViewWithMouseOver?.set(isMouseOver: true)
 	}
 	
-	private func item(at location: NSPoint?, in scrubber: NSScrubber?) -> DockItem? {
-		guard let location = location, let scrubber = scrubber else {
-			return nil
+	private func item(at location: NSPoint) -> DockItem? {
+		let loc = NSPoint(x: location.x + 6, y: 12)
+		guard let result = cachedDockItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
+			guard let result = cachedPersistentItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
+				return nil
+			}
+			return persistentItems.first(where: { $0.diffId == result.key })
 		}
-		let items 	 = scrubber == dockScrubber ? dockItems : persistentItems
-		let maxWidth = scrubber == dockScrubber ? dockMaxWidth : persistentMaxWidth
-		let position = scrubber == dockScrubber ? location.x : (location.x - dockMaxWidth)
-		let percentage = position / maxWidth
-		let index  = Int(CGFloat(items.count) * percentage)
-		let adjust = items.count > (index + 1) ? 1 : 0
-		scrubber.animator().scrollItem(at: index + adjust, to: .center)
-		return items[index]
+		return dockItems.first(where: { $0.diffId == result.key })
 	}
 	
-	private func itemView(at location: NSPoint?, in scrubber: NSScrubber?) -> DockItemView? {
-		guard let item = item(at: location, in: scrubber) else {
-			return nil
+	private func itemView(at location: NSPoint) -> DockItemView? {
+		let loc = NSPoint(x: location.x + 6, y: 12)
+		guard let result = cachedDockItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
+			guard let result = cachedPersistentItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
+				return nil
+			}
+			return result.value
 		}
-		let views = scrubber == dockScrubber ? cachedDockItemViews : cachedPersistentItemViews
-		return views.first(where: { $0.key == item.diffId })?.value
+		return result.value
 	}
 	
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint?) {
-		itemViewWithMouseOver?.set(isMouseOver: false)
-		guard Defaults[.showCursor] else {
-			let adjustedLocation  = dockMaxWidth - (location?.x ?? 0)
-			let scrubber		  = adjustedLocation > 0 ? dockScrubber : persistentScrubber
-			itemViewWithMouseOver = itemView(at: location, in: scrubber)
-			itemViewWithMouseOver?.set(isMouseOver: true)
-			return
-		}
 		showCursor(at: location)
 	}
 	
-	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint?) {
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat) {
 		guard Defaults[.showCursor] else {
-			let adjustedLocation = dockScrubber.contentSize.width - (location?.x ?? 0)
-			let scrubber		 = adjustedLocation > 0 ? dockScrubber : persistentScrubber
-			launchItem(self.item(at: location, in: scrubber))
 			return
 		}
-		guard let id = (cachedDockItemViews.first(where: { $0.value == itemViewWithMouseOver }) ?? cachedPersistentItemViews.first(where: { $0.value == itemViewWithMouseOver }))?.key,
-			  let item = dockItems.first(where: { $0.diffId == id }) ?? persistentItems.first(where: { $0.diffId == id }) else {
-			return
-		}
-		launchItem(item)
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		print("[DockWidget]: SCROLL delta: \(delta)")
+	}
+	
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint) {
+		launchItem(item(at: location))
 	}
 }

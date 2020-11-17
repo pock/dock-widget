@@ -21,7 +21,7 @@ extension String {
 extension NSNotification.Name {
     static let didChangeNotificationBadgeRefreshRate = NSNotification.Name("didSelectNotificationBadgeRefreshRate")
     static let shouldReloadDock                      = NSNotification.Name("shouldReloadDock")
-    static let shouldReloadDockLayout                = NSNotification.Name("shouldReloadDockLayout")
+    static let shouldReloadScrubbersLayout           = NSNotification.Name("shouldReloadScrubbersLayout")
     static let shouldReloadPersistentItems           = NSNotification.Name("shouldReloadPersistentItems")
 	static let shouldReloadScreenEdgeController		 = NSNotification.Name("shouldReloadScreenEdgeController")
 }

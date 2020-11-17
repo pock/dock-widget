@@ -66,6 +66,9 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
 		self.hasMouseSupport.state 				= Defaults[.hasMouseSupport] 	  ? .on : .off
 		self.showCursor.state 					= Defaults[.showCursor] 		  ? .on : .off
         self.hideTrashCheckbox.isEnabled        = !Defaults[.hidePersistentItems]
+		self.showCursor.isEnabled 				= Defaults[.hasMouseSupport]
+		
+		self.itemSpacingTextField.stringValue = "\(Defaults[.itemSpacing])pt"
     }
 
     @IBAction private func didSelectNotificationBadgeRefreshRate(_: NSButton) {
@@ -89,8 +92,8 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
 	
 	@IBAction private func didChangeHideRunningIndicatorValue(button: NSButton) {
 		Defaults[.hideRunningIndicator] = button.state == .on
-		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, 	  object: nil)
-		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDockLayout, object: nil)
+		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, 	  	   object: nil)
+		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScrubbersLayout, object: nil)
 	}
     
     @IBAction private func didChangeHideTrashValue(button: NSButton) {
@@ -123,6 +126,6 @@ extension DockWidgetPreferencePane: NSTextFieldDelegate {
     func controlTextDidEndEditing(_ obj: Notification) {
         let value = itemSpacingTextField.stringValue.replacingOccurrences(of: "pt", with: "")
         Defaults[.itemSpacing] = Int(value) ?? 8
-        NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDockLayout, object: nil)
+        NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScrubbersLayout, object: nil)
     }
 }
