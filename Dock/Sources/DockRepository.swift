@@ -308,8 +308,8 @@ extension DockRepository {
             }
         }
         /// Then check for path
-        if path != nil {
-            return NSWorkspace.shared.icon(forFile: path!)
+		if let path = path?.removingPercentEncoding {
+			return NSWorkspace.shared.icon(forFile: path)
         }
         var genericIconPath = "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/GenericDocumentIcon.icns"
         if type != nil {

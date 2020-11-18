@@ -37,6 +37,7 @@ class DockWidget: NSObject, PKWidget {
     private var separator:          NSView! 	 = NSView(frame:     NSRect(x: 0, y: 0, width: 1, 	height: 20))
     private var persistentScrubber: NSScrubber!  = NSScrubber(frame: NSRect(x: 0, y: 0, width: 50, 	height: 30))
 	private var cursorView:			NSView?
+	private var draggingInfoView:	DraggingInfoView?
     
     /// Data
     private var dockItems:       [DockItem] = []
@@ -91,7 +92,7 @@ class DockWidget: NSObject, PKWidget {
 	
 	@objc private func reloadScreenEdgeController() {
 		if Defaults[.hasMouseSupport] {
-			self.screenEdgeController = ScreenEdgeController(delegate: self)
+			self.screenEdgeController = ScreenEdgeController(mouseDelegate: self)
 			self.screenEdgeController?.contentSize = self.totalContentSizeWidth
 		}else {
 			self.screenEdgeController = nil
@@ -249,6 +250,7 @@ extension DockWidget: NSScrubberDataSource {
 }
 
 extension DockWidget: NSScrubberDelegate {
+	
     func scrubber(_ scrubber: NSScrubber, didSelectItemAt selectedIndex: Int) {
         let item = scrubber == persistentScrubber ? persistentItems[selectedIndex] : dockItems[selectedIndex]
         launchItem(item)
@@ -261,12 +263,15 @@ extension DockWidget: NSScrubberDelegate {
 	}
 	
 	func didFinishInteracting(with scrubber: NSScrubber) {
-		showCursor(at: cursorView?.frame.origin)
+		showCursor(.arrow, at: cursorView?.frame.origin)
 	}
 	
 	func launchItem(_ item: DockItem?) {
 		guard let item = item else {
 			return
+		}
+		if !item.isPersistentItem, !item.isRunning, let itemView = itemView(for: item) {
+			itemView.set(isLaunching: true)
 		}
 		var result: Bool = false
 		if item.bundleIdentifier?.lowercased() == "com.apple.finder" {
@@ -278,25 +283,51 @@ extension DockWidget: NSScrubberDelegate {
 	}
 }
 
-extension DockWidget: ScreenEdgeDelegate {
-	
-	private func showCursor(at location: NSPoint?) {
-		guard let location = location else {
-			cursorView?.removeFromSuperview()
-			cursorView = nil
+// MARK: Cursor stuff
+extension DockWidget {
+	private func showCursor(_ cursor: NSCursor?, at location: NSPoint?) {
+		cursorView?.removeFromSuperview()
+		cursorView = nil
+		guard let cursor = cursor, let location = location else {
 			return
 		}
 		if Defaults[.showCursor] {
-			if cursorView == nil {
-				cursorView = NSImageView(image: NSCursor.arrow.image)
-				view.addSubview(cursorView!)
-			}
-			cursorView?.frame = NSRect(x: location.x, y: location.y, width: 20, height: 20)
+			cursorView = NSImageView(image: cursor.image)
+			cursorView?.frame.size = NSSize(width: 20, height: 20)
+			view.addSubview(cursorView!)
 		}
+		updateCursorLocation(location)
+	}
+	
+	private func updateCursorLocation(_ location: NSPoint) {
+		cursorView?.frame.origin = location
 		itemViewWithMouseOver = itemView(at: location)
 		itemViewWithMouseOver?.set(isMouseOver: true)
 	}
 	
+	private func showDraggingInfo(_ info: NSDraggingInfo?, filepath: String?) {
+		draggingInfoView?.removeFromSuperview()
+		draggingInfoView = nil
+		guard let info = info, let filepath = filepath else {
+			return
+		}
+		if Defaults[.showCursor] {
+			draggingInfoView = DraggingInfoView(filepath: URL(fileURLWithPath: filepath))
+			view.addSubview(draggingInfoView!, positioned: .below, relativeTo: cursorView)
+		}
+		updateDraggingInfoLocation(info.draggingLocation)
+	}
+	
+	private func updateDraggingInfoLocation(_ location: NSPoint) {
+		guard let view = draggingInfoView else {
+			return
+		}
+		view.frame.origin = NSPoint(x: location.x - view.frame.width + 8, y: location.y)
+	}
+}
+
+// MARK: Retrieve DockItem & DockItemView
+extension DockWidget {
 	private func item(at location: NSPoint) -> DockItem? {
 		let loc = NSPoint(x: location.x + 6, y: 12)
 		guard let result = cachedPersistentItemViews.first(where: { $0.value.convert($0.value.iconView.frame, to: self.view).contains(loc) }) else {
@@ -319,9 +350,25 @@ extension DockWidget: ScreenEdgeDelegate {
 		return result.value
 	}
 	
-	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint?) {
+	private func itemView(for item: DockItem) -> DockItemView? {
+		guard let result = cachedPersistentItemViews.first(where: { $0.key == item.diffId })?.value else {
+			return cachedDockItemViews.first(where: { $0.key == item.diffId })?.value
+		}
+		return result
+	}
+}
+
+// MARK: ScreenEdgeMouseDelegate (Select, Scroll & Drag)
+extension DockWidget: ScreenEdgeMouseDelegate {
+	
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseEnteredAtLocation location: NSPoint) {
 		itemViewWithMouseOver?.set(isMouseOver: false)
-		showCursor(at: location)
+		showCursor(.arrow, at: location)
+	}
+	
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		updateCursorLocation(location)
 	}
 	
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint) {
@@ -333,15 +380,64 @@ extension DockWidget: ScreenEdgeDelegate {
 		}
 		let maxWidth = scrubber.contentSize.width - scrubber.visibleRect.width
 		let newX     = clipView.bounds.origin.x - delta
-		if (-6...maxWidth+6).contains(newX) {
+		if maxWidth > 0, (-6...maxWidth+6).contains(newX) {
 			clipView.setBoundsOrigin(NSPoint(x: newX, y: clipView.bounds.origin.y))
 			scrollView.reflectScrolledClipView(clipView)
 		}
-		showCursor(at: location)
 	}
 	
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint) {
 		launchItem(item(at: location))
+	}
+	
+	func screenEdgeController(_ controller: ScreenEdgeController, draggingEntered info: NSDraggingInfo, filepath: String) -> NSDragOperation {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		showDraggingInfo(info, filepath: filepath)
+		return .every
+	}
+	
+	func screenEdgeController(_ controller: ScreenEdgeController, draggingUpdated info: NSDraggingInfo, filepath: String) -> NSDragOperation {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		let location = info.draggingLocation
+		let isPersistentItem = item(at: info.draggingLocation)?.isPersistentItem ?? false
+		showCursor(isPersistentItem ? .dragCopy : .arrow, at: location)
+		updateCursorLocation(location)
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1275, execute: { [weak self] in
+			self?.updateDraggingInfoLocation(location)
+		})
+		return .every
+	}
+	
+	func screenEdgeController(_ controller: ScreenEdgeController, performDragOperation info: NSDraggingInfo, filepath: String) -> Bool {
+		guard let item = item(at: info.draggingLocation) else {
+			return false
+		}
+		let filePathURL = URL(fileURLWithPath: filepath)
+		if let bundleIdentifier = item.bundleIdentifier {
+			return NSWorkspace.shared.open([filePathURL], withAppBundleIdentifier: bundleIdentifier, options: .withErrorPresentation, additionalEventParamDescriptor: nil, launchIdentifiers: nil)
+		}else if let destinationPathURL = item.path?.appendingPathComponent(filePathURL.lastPathComponent) {
+			do {
+				if item.path?.relativePath == Constants.trashPath {
+					try FileManager.default.trashItem(at: filePathURL, resultingItemURL: nil)
+					SystemSound.play(.move_to_trash)
+				}else {
+					try FileManager.default.moveItem(at: filePathURL, to: destinationPathURL)
+					SystemSound.play(.volume_mount)
+				}
+				return true
+			}catch {
+				print("[DockWidget][mv] Error: \(error.localizedDescription)")
+				NSSound.beep()
+				return false
+			}
+		}
+		return false
+	}
+	
+	func screenEdgeControllerMouseExited(_ controller: ScreenEdgeController) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		showCursor(nil, at: nil)
+		showDraggingInfo(nil, filepath: nil)
 	}
 	
 }

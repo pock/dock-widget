@@ -8,22 +8,31 @@
 
 import AppKit
 
-internal protocol ScreenEdgeDelegate: class {
-	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint?)
+@objc public protocol ScreenEdgeMouseDelegate: class {
+	/// Required
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseEnteredAtLocation location: NSPoint)
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint)
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint)
-	func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint)
+	func screenEdgeController(_ controller: ScreenEdgeController, draggingEntered info: NSDraggingInfo, filepath: String) -> NSDragOperation
+	func screenEdgeController(_ controller: ScreenEdgeController, draggingUpdated info: NSDraggingInfo, filepath: String) -> NSDragOperation
+	func screenEdgeController(_ controller: ScreenEdgeController, performDragOperation info: NSDraggingInfo, filepath: String) -> Bool
+	func screenEdgeControllerMouseExited(_ controller: ScreenEdgeController)
+	/// Optionals
+	@objc optional func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint)
 }
 
-internal class ScreenEdgeController: NSWindowController {
+@objc public class ScreenEdgeController: NSWindowController {
 	
 	/// Core
 	private var trackingArea: NSTrackingArea?
-	internal weak var delegate: ScreenEdgeDelegate?
 	internal var contentSize: CGFloat = NSScreen.screens.first?.frame.width ?? 0 {
 		didSet {
 			snapToScreenBottomEdge()
 		}
 	}
+	
+	/// Delegates
+	internal weak var mouseDelegate: ScreenEdgeMouseDelegate?
 	
 	/// Data
 	private var screenBottomEdgeRect: NSRect {
@@ -36,7 +45,7 @@ internal class ScreenEdgeController: NSWindowController {
 	}
 	
 	/// Private initialiser
-	internal convenience init(delegate: ScreenEdgeDelegate?) {
+	internal convenience init(mouseDelegate: ScreenEdgeMouseDelegate?) {
 		/// Create tracking window
 		let window: NSWindow? = NSWindow(contentRect: .zero, styleMask: .borderless, backing: .buffered, defer: false, screen: NSScreen.main)
 		window?.collectionBehavior   	  = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
@@ -51,9 +60,11 @@ internal class ScreenEdgeController: NSWindowController {
 		window?.isOpaque   				  = false
 		window?.backgroundColor 		  = .red
 		window?.alphaValue 				  = 0
+		/// Dragging support
+		window?.registerForDraggedTypes([.URL, .fileURL, .filePromise])
 		/// Create controller
 		self.init(window: window)
-		self.delegate = delegate
+		self.mouseDelegate = mouseDelegate
 		/// Setup window
 		window?.orderFrontRegardless()
 		window?.delegate = self
@@ -86,40 +97,94 @@ internal class ScreenEdgeController: NSWindowController {
 	
 }
 
-// MARK: NSWindowDelegate
+// MARK: Mouse Delegate
 extension ScreenEdgeController: NSWindowDelegate {
 	
 	/// Mouse did enter in edge window
-	override func mouseEntered(with event: NSEvent) {
-		mouseMoved(with: event)
+	override public func mouseEntered(with event: NSEvent) {
+		guard let delegate = mouseDelegate, let point = window?.mouseLocationOutsideOfEventStream else {
+			return
+		}
+		delegate.screenEdgeController(self, mouseEnteredAtLocation: point)
 	}
 	
 	/// Did move mouse in edge window
-	override func mouseMoved(with event: NSEvent) {
-		guard let delegate = delegate, let point = window?.mouseLocationOutsideOfEventStream else {
+	override public func mouseMoved(with event: NSEvent) {
+		guard let delegate = mouseDelegate, let point = window?.mouseLocationOutsideOfEventStream else {
 			return
 		}
 		delegate.screenEdgeController(self, mouseMovedAtLocation: point)
 	}
 	
 	/// Did scroll mouse in edge window
-	override func scrollWheel(with event: NSEvent) {
-		guard let delegate = delegate else {
+	override public func scrollWheel(with event: NSEvent) {
+		guard let delegate = mouseDelegate else {
 			return
 		}
-		delegate.screenEdgeController(self, mouseScrollWithDelta: event.deltaX, atLocation: event.locationInWindow)
+		delegate.screenEdgeController?(self, mouseScrollWithDelta: event.deltaX, atLocation: event.locationInWindow)
 	}
 	
 	/// Did click in edge window
-	override func mouseUp(with event: NSEvent) {
-		guard let delegate = delegate else {
+	override public func mouseUp(with event: NSEvent) {
+		guard let delegate = mouseDelegate else {
 			return
 		}
 		delegate.screenEdgeController(self, mouseClickAtLocation: event.locationInWindow)
 	}
 	
 	/// Mouse did exit from edge window
-	override func mouseExited(with event: NSEvent) {
-		delegate?.screenEdgeController(self, mouseMovedAtLocation: nil)
+	override public func mouseExited(with event: NSEvent) {
+		mouseDelegate?.screenEdgeControllerMouseExited(self)
 	}
+
+}
+
+// MARK: Dragging Delegate
+extension ScreenEdgeController: NSDraggingDestination {
+	
+	public func wantsPeriodicDraggingUpdates() -> Bool {
+		return true
+	}
+	
+	public func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+		guard let delegate = mouseDelegate,
+			  let pasteboard = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
+			  let path = pasteboard[0] as? String else {
+			return NSDragOperation()
+		}
+		return delegate.screenEdgeController(self, draggingEntered: sender, filepath: path)
+	}
+	
+	public func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
+		guard let delegate = mouseDelegate,
+			  let pasteboard = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
+			  let path = pasteboard[0] as? String else {
+			return NSDragOperation()
+		}
+		return delegate.screenEdgeController(self, draggingUpdated: sender, filepath: path)
+	}
+	
+	public func draggingExited(_ sender: NSDraggingInfo?) {
+		guard let delegate = mouseDelegate else {
+			return
+		}
+		delegate.screenEdgeControllerMouseExited(self)
+	}
+	
+	public func draggingEnded(_ sender: NSDraggingInfo) {
+		guard let delegate = mouseDelegate else {
+			return
+		}
+		delegate.screenEdgeControllerMouseExited(self)
+	}
+	
+	public func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+		guard let delegate = mouseDelegate,
+			  let pasteboard = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
+			  let path = pasteboard[0] as? String else {
+			return false
+		}
+		return delegate.screenEdgeController(self, performDragOperation: sender, filepath: path)
+	}
+	
 }

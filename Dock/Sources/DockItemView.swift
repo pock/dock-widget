@@ -157,13 +157,13 @@ extension DockItemView {
         }
     }
     private func loadBounceAnimation() {
-        isAnimating                  = true
-        let bounce                   = CABasicAnimation(keyPath: "position.y")
-        bounce.byValue               = NSNumber(floatLiteral: 10)
-        bounce.duration              = 0.3
-        bounce.autoreverses          = true
-        bounce.repeatCount           = 10
-        bounce.timingFunction        = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+        isAnimating           = true
+        let bounce            = CABasicAnimation(keyPath: "position.y")
+        bounce.byValue        = NSNumber(floatLiteral: 10)
+        bounce.duration       = 0.3
+        bounce.autoreverses   = true
+        bounce.repeatCount    = 10
+        bounce.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
         let frame = self.iconView.layer?.frame
         self.iconView.layer?.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         self.iconView.layer?.frame = frame ?? .zero
