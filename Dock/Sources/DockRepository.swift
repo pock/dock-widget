@@ -348,7 +348,7 @@ extension DockRepository {
             }
         }else {
             /// Open Finder in Touch Bar
-            if bundleIdentifier == "com.apple.finder" && openFinderInsidePock {
+			if bundleIdentifier.lowercased() == Constants.kFinderIdentifier && openFinderInsidePock {
                 dockFolderRepository?.popToRootDockFolderController()
                 dockFolderRepository?.push(URL(string: NSHomeDirectory())!)
                 returnable = true
@@ -367,7 +367,11 @@ extension DockRepository {
             return
         }
         let apps = NSRunningApplication.runningApplications(withBundleIdentifier: identifier)
-        guard apps.count > 0 else {
+		guard _item.bundleIdentifier?.lowercased() != Constants.kFinderIdentifier else {
+			launch(bundleIdentifier: _item.bundleIdentifier ?? _item.path?.absoluteString, completion: completion)
+			return
+		}
+		guard apps.count > 0 else {
             launch(bundleIdentifier: _item.bundleIdentifier ?? _item.path?.absoluteString, completion: completion)
             return
         }

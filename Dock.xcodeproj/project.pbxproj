@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		347419112561B72500C2DD20 /* ScreenEdgeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347419102561B72500C2DD20 /* ScreenEdgeController.swift */; };
 		3474195725645C1600C2DD20 /* SystemSoundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3474195625645C1600C2DD20 /* SystemSoundHelper.swift */; };
+		34BC76D625658C7C00739855 /* DraggingInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BC76D525658C7B00739855 /* DraggingInfoView.swift */; };
 		34D4A1BF246DE4FA005FA975 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34D4A1B7246DE4FA005FA975 /* Localizable.strings */; };
 		34DF322F246DCCE8009B46B9 /* DockItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3210246DCCE7009B46B9 /* DockItemView.swift */; };
 		34DF3230246DCCE8009B46B9 /* DockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3211246DCCE7009B46B9 /* DockWidget.swift */; };
@@ -44,6 +45,7 @@
 		34AFC98D246DC8E00068B3B6 /* Dock.pock */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dock.pock; sourceTree = BUILT_PRODUCTS_DIR; };
 		34AFC990246DC8E00068B3B6 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		34AFC994246DC8E00068B3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		34BC76D525658C7B00739855 /* DraggingInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DraggingInfoView.swift; sourceTree = "<group>"; };
 		34D4A1B8246DE4FA005FA975 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		34D4A1B9246DE4FA005FA975 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		34D4A1BA246DE4FA005FA975 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				34DF322D246DCCE8009B46B9 /* DockRepository.swift */,
 				34DF3211246DCCE7009B46B9 /* DockWidget.swift */,
 				34DF3217246DCCE8009B46B9 /* FileMonitor.swift */,
+				34BC76D525658C7B00739855 /* DraggingInfoView.swift */,
 				34DF3246246DCE2C009B46B9 /* Bridging-Header.h */,
 				34DF3247246DCECB009B46B9 /* Preferences */,
 				34DF3245246DCDDD009B46B9 /* Helpers */,
@@ -398,6 +401,7 @@
 				34DF3237246DCCE8009B46B9 /* EventStream.swift in Sources */,
 				347419112561B72500C2DD20 /* ScreenEdgeController.swift in Sources */,
 				34DF3234246DCCE8009B46B9 /* FileMonitor.swift in Sources */,
+				34BC76D625658C7C00739855 /* DraggingInfoView.swift in Sources */,
 				34DF3230246DCCE8009B46B9 /* DockWidget.swift in Sources */,
 				34DF323B246DCCE8009B46B9 /* DockFolderController.swift in Sources */,
 				34DF323D246DCCE8009B46B9 /* DockFolderRepository.swift in Sources */,

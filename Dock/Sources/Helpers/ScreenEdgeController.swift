@@ -11,12 +11,13 @@ import AppKit
 @objc public protocol ScreenEdgeMouseDelegate: class {
 	/// Required
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseEnteredAtLocation location: NSPoint)
-	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint)
-	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint)
-	func screenEdgeController(_ controller: ScreenEdgeController, draggingEntered info: NSDraggingInfo, filepath: String) -> NSDragOperation
-	func screenEdgeController(_ controller: ScreenEdgeController, draggingUpdated info: NSDraggingInfo, filepath: String) -> NSDragOperation
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation 	 location: NSPoint)
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation 	 location: NSPoint)
+	func screenEdgeController(_ controller: ScreenEdgeController, mouseExitedAtLocation  location: NSPoint)
+	func screenEdgeController(_ controller: ScreenEdgeController, draggingEntered 	   info: NSDraggingInfo, filepath: String) -> NSDragOperation
+	func screenEdgeController(_ controller: ScreenEdgeController, draggingUpdated 	   info: NSDraggingInfo, filepath: String) -> NSDragOperation
 	func screenEdgeController(_ controller: ScreenEdgeController, performDragOperation info: NSDraggingInfo, filepath: String) -> Bool
-	func screenEdgeControllerMouseExited(_ controller: ScreenEdgeController)
+	func screenEdgeController(_ controller: ScreenEdgeController, draggingEnded 	   info: NSDraggingInfo)
 	/// Optionals
 	@objc optional func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint)
 }
@@ -134,7 +135,7 @@ extension ScreenEdgeController: NSWindowDelegate {
 	
 	/// Mouse did exit from edge window
 	override public func mouseExited(with event: NSEvent) {
-		mouseDelegate?.screenEdgeControllerMouseExited(self)
+		mouseDelegate?.screenEdgeController(self, mouseExitedAtLocation: event.locationInWindow)
 	}
 
 }
@@ -143,7 +144,7 @@ extension ScreenEdgeController: NSWindowDelegate {
 extension ScreenEdgeController: NSDraggingDestination {
 	
 	public func wantsPeriodicDraggingUpdates() -> Bool {
-		return true
+		return false
 	}
 	
 	public func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
@@ -165,17 +166,17 @@ extension ScreenEdgeController: NSDraggingDestination {
 	}
 	
 	public func draggingExited(_ sender: NSDraggingInfo?) {
-		guard let delegate = mouseDelegate else {
+		guard let delegate = mouseDelegate, let location = sender?.draggingLocation ?? window?.mouseLocationOutsideOfEventStream else {
 			return
 		}
-		delegate.screenEdgeControllerMouseExited(self)
+		delegate.screenEdgeController(self, mouseExitedAtLocation: location)
 	}
 	
 	public func draggingEnded(_ sender: NSDraggingInfo) {
 		guard let delegate = mouseDelegate else {
 			return
 		}
-		delegate.screenEdgeControllerMouseExited(self)
+		delegate.screenEdgeController(self, draggingEnded: sender)
 	}
 	
 	public func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
