@@ -9,7 +9,7 @@
 import Foundation
 import PockKit
 
-class DockFolderController: PKTouchBarController {
+class DockFolderController: PKTouchBarMouseController {
     
     /// UI
     @IBOutlet private weak var folderName:   NSTextField!

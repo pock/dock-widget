@@ -23,7 +23,7 @@ extension NSNotification.Name {
     static let shouldReloadDock                      = NSNotification.Name("shouldReloadDock")
     static let shouldReloadScrubbersLayout           = NSNotification.Name("shouldReloadScrubbersLayout")
     static let shouldReloadPersistentItems           = NSNotification.Name("shouldReloadPersistentItems")
-	static let shouldReloadScreenEdgeController		 = NSNotification.Name("shouldReloadScreenEdgeController")
+	static let shouldReloadScreenEdgeController 	 = NSNotification.Name("shouldReloadScreenEdgeController")
 }
 
 enum NotificationBadgeRefreshRateKeys: Double, Codable, CaseIterable {
@@ -81,5 +81,5 @@ extension Defaults.Keys {
     static let hidePersistentItems              = Defaults.Key<Bool>("hidePersistentItems",    default: false)
     static let openFinderInsidePock             = Defaults.Key<Bool>("openFinderInsidePock",   default: true)
 	static let hasMouseSupport					= Defaults.Key<Bool>("hasMouseSupport",		   default: true)
-	static let showCursor					 	= Defaults.Key<Bool>("showCursor",		   	   default: true) // TODO: Change default to `false`
+	static let showCursor					 	= Defaults.Key<Bool>("showCursor",		   	   default: true)
 }

@@ -10,7 +10,7 @@ import Foundation
 import Defaults
 import PockKit
 
-class DockWidget: ScreenEdgeBaseController, PKWidget {
+class DockWidget: PKScreenEdgeBaseController, PKWidget {
 	
 	var identifier: NSTouchBarItem.Identifier = NSTouchBarItem.Identifier(rawValue: "DockWidget")
 	var customizationLabel: String = "Dock"
@@ -25,21 +25,24 @@ class DockWidget: ScreenEdgeBaseController, PKWidget {
 	private var persistentContentSize: CGFloat {
 		return persistentScrubber.visibleRect.width
 	}
-	override var totalContentSizeWidth: CGFloat {
-		let max = NSScreen.main?.frame.width ?? CGFloat.greatestFiniteMagnitude
-		return min(dockContentSize + persistentContentSize + (stackView.spacing * 2) + 8, max)
+	override var visibleRectWidth: CGFloat {
+		get {
+			let max = NSScreen.main?.frame.width ?? CGFloat.greatestFiniteMagnitude
+			return min(dockContentSize + persistentContentSize + (stackView.spacing * 2) + 8, max)
+		}
+		set { /**/ }
 	}
+	
+	override var parentView: NSView? {
+		get { return view } set { /**/ }
+	}
+	private var dropDispatchWorkItem: DispatchWorkItem?
 	
 	/// UI
 	private var stackView:          NSStackView! = NSStackView(frame: .zero)
 	private var dockScrubber:       NSScrubber!  = NSScrubber(frame: NSRect(x: 0, y: 0, width: 200, height: 30))
 	private var separator:          NSView! 	 = NSView(frame:     NSRect(x: 0, y: 0, width: 1, 	height: 20))
 	private var persistentScrubber: NSScrubber!  = NSScrubber(frame: NSRect(x: 0, y: 0, width: 50, 	height: 30))
-	
-	/// Mouse + drang-and-drop
-	private var cursorView:		  NSView?
-	private var draggingInfoView: DraggingInfoView?
-	private var dropDispatchWorkItem: DispatchWorkItem?
 	
 	/// Data
 	private var dockItems:       [DockItem] = []
@@ -49,7 +52,7 @@ class DockWidget: ScreenEdgeBaseController, PKWidget {
 	private var itemViewWithMouseOver: 	  DockItemView?
 	private var itemViewWithDraggingOver: DockItemView?
 	
-	required override init() {
+	required init() {
 		super.init()
 		self.configureStackView()
 		self.configureDockScrubber()
@@ -154,17 +157,17 @@ class DockWidget: ScreenEdgeBaseController, PKWidget {
 	}
 	
 	// MARK: ScreenEdgeMouseDelegate (Select, Scroll & Drag)
-	override func screenEdgeController(_ controller: ScreenEdgeController, mouseEnteredAtLocation location: NSPoint) {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseEnteredAtLocation location: NSPoint) {
 		itemViewWithMouseOver?.set(isMouseOver: false)
 		showCursor(.arrow, at: location)
 	}
 	
-	override func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation location: NSPoint) {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseMovedAtLocation location: NSPoint) {
 		itemViewWithMouseOver?.set(isMouseOver: false)
 		updateCursorLocation(location)
 	}
 	
-	override func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint) {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint) {
 		itemViewWithMouseOver?.set(isMouseOver: false)
 		guard let scrubber = (dockContentSize - location.x) > 0 ? dockScrubber : persistentScrubber,
 			  let clipView: NSClipView = scrubber.findViews().first,
@@ -179,17 +182,17 @@ class DockWidget: ScreenEdgeBaseController, PKWidget {
 		}
 	}
 	
-	override func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation location: NSPoint) {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseClickAtLocation location: NSPoint) {
 		launchItem(item(at: location))
 	}
 	
-	override func screenEdgeController(_ controller: ScreenEdgeController, draggingEntered info: NSDraggingInfo, filepath: String) -> NSDragOperation {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, draggingEntered info: NSDraggingInfo, filepath: String) -> NSDragOperation {
 		itemViewWithMouseOver?.set(isMouseOver: false)
 		showDraggingInfo(info, filepath: filepath)
 		return .every
 	}
 	
-	override func screenEdgeController(_ controller: ScreenEdgeController, draggingUpdated info: NSDraggingInfo, filepath: String) -> NSDragOperation {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, draggingUpdated info: NSDraggingInfo, filepath: String) -> NSDragOperation {
 		let location = info.draggingLocation
 		let item = self.item(at: location)
 		updateDraggingInfoLocation(location)
@@ -216,7 +219,7 @@ class DockWidget: ScreenEdgeBaseController, PKWidget {
 		return .every
 	}
 	
-	override func screenEdgeController(_ controller: ScreenEdgeController, performDragOperation info: NSDraggingInfo, filepath: String) -> Bool {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, performDragOperation info: NSDraggingInfo, filepath: String) -> Bool {
 		showDraggingInfo(nil, filepath: nil)
 		guard let item = item(at: info.draggingLocation) else {
 			return false
@@ -244,16 +247,42 @@ class DockWidget: ScreenEdgeBaseController, PKWidget {
 		return false
 	}
 	
-	override func screenEdgeController(_ controller: ScreenEdgeController, draggingEnded info: NSDraggingInfo) {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, draggingEnded info: NSDraggingInfo) {
 		showCursor(.arrow, at: info.draggingLocation)
 		showDraggingInfo(nil, filepath: nil)
 	}
 	
-	override func screenEdgeController(_ controller: ScreenEdgeController, mouseExitedAtLocation location: NSPoint) {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseExitedAtLocation location: NSPoint) {
 		showCursor(nil, at: nil)
 		showDraggingInfo(nil, filepath: nil)
 	}
 	
+	// MARK: Cursor Stuff
+	override func showCursor(_ cursor: NSCursor?, at location: NSPoint?) {
+		guard Defaults[.showCursor] else {
+			return
+		}
+		super.showCursor(cursor, at: location)
+	}
+	
+	override func updateCursorLocation(_ location: NSPoint?) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		itemViewWithMouseOver = nil
+		guard let location = location else {
+			return
+		}
+		super.updateCursorLocation(location)
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		itemViewWithMouseOver = itemView(at: location)
+		itemViewWithMouseOver?.set(isMouseOver: true)
+	}
+	
+	override func showDraggingInfo(_ info: NSDraggingInfo?, filepath: String?) {
+		guard Defaults[.showCursor] else {
+			return
+		}
+		super.showDraggingInfo(info, filepath: filepath)
+	}
 	
 }
 
@@ -307,7 +336,7 @@ extension DockWidget: DockDelegate {
 			}
 			completion?(newItems)
 			scrubber.reloadData()
-			self.edgeController?.contentSize = self.totalContentSizeWidth
+			self.reloadScreenEdgeController()
 		}
 	}
 	func didUpdateBadge(for apps: [DockItem]) {
@@ -376,58 +405,6 @@ extension DockWidget: NSScrubberDelegate {
 			itemView.set(isLaunching: true)
 		}
 		dockRepository.launch(item: item, completion: { _ in })
-	}
-}
-
-// MARK: Cursor stuff
-extension DockWidget {
-	private func showCursor(_ cursor: NSCursor?, at location: NSPoint?) {
-		cursorView?.removeFromSuperview()
-		cursorView = nil
-		guard let cursor = cursor, let location = location else {
-			updateCursorLocation(nil)
-			return
-		}
-		if Defaults[.showCursor] {
-			cursorView = NSImageView(image: cursor.image)
-			cursorView?.frame.size = NSSize(width: 20, height: 20)
-			view.addSubview(cursorView!)
-		}
-		updateCursorLocation(location)
-	}
-	
-	private func updateCursorLocation(_ location: NSPoint?) {
-		itemViewWithMouseOver?.set(isMouseOver: false)
-		itemViewWithMouseOver = nil
-		guard let location = location else {
-			return
-		}
-		cursorView?.frame.origin = location
-		itemViewWithMouseOver?.set(isMouseOver: false)
-		itemViewWithMouseOver = itemView(at: location)
-		itemViewWithMouseOver?.set(isMouseOver: true)
-	}
-	
-	private func showDraggingInfo(_ info: NSDraggingInfo?, filepath: String?) {
-		draggingInfoView?.removeFromSuperview()
-		draggingInfoView = nil
-		guard let info = info, let filepath = filepath else {
-			return
-		}
-		if Defaults[.showCursor] {
-			draggingInfoView = DraggingInfoView(filepath: URL(fileURLWithPath: filepath))
-			view.addSubview(draggingInfoView!, positioned: .below, relativeTo: cursorView)
-		}
-		updateDraggingInfoLocation(info.draggingLocation, animated: false)
-	}
-	
-	private func updateDraggingInfoLocation(_ location: NSPoint, animated: Bool = true) {
-		guard let view = draggingInfoView else {
-			return
-		}
-		DispatchQueue.main.asyncAfter(deadline: .now() + (animated ? 0.1275 : 0), execute: {
-			view.frame.origin = NSPoint(x: location.x - view.frame.width + 8, y: location.y)
-		})
 	}
 }
 

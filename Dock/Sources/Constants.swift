@@ -41,14 +41,6 @@ extension NSScrubber {
 	}
 }
 
-extension NSWindow {
-	public func centerHorizontally() {
-		if let screenSize = screen?.frame.size {
-			self.setFrameOrigin(NSPoint(x: (screenSize.width - frame.size.width) / 2, y: frame.origin.y))
-		}
-	}
-}
-
 extension NSView {
 	func findViews<T: NSView>(subclassOf: T.Type = T.self) -> [T] {
 		return recursiveSubviews.compactMap { $0 as? T }
