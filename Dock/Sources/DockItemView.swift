@@ -150,7 +150,7 @@ class DockItemView: NSScrubberItemView {
     
 }
 
-extension DockItemView {
+extension DockItemView: CAAnimationDelegate {
     func startBounceAnimation() {
         if !isAnimating {
             self.loadBounceAnimation()
@@ -160,9 +160,10 @@ extension DockItemView {
         isAnimating           = true
         let bounce            = CABasicAnimation(keyPath: "position.y")
         bounce.byValue        = NSNumber(floatLiteral: 10)
-        bounce.duration       = 0.3
+        bounce.duration       = 0.325
         bounce.autoreverses   = true
-        bounce.repeatCount    = 10
+		bounce.isRemovedOnCompletion = true
+		bounce.delegate = self
         bounce.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
         let frame = self.iconView.layer?.frame
         self.iconView.layer?.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -171,8 +172,9 @@ extension DockItemView {
         self.badgeView?.layer?.add(bounce, forKey: DockItemView.kBounceAnimationKey)
     }
     func stopBounceAnimation() {
-        self.iconView.layer?.removeAnimation(forKey: DockItemView.kBounceAnimationKey)
-        self.badgeView?.layer?.removeAnimation(forKey: DockItemView.kBounceAnimationKey)
         self.isAnimating = false
     }
+	func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+		startBounceAnimation()
+	}
 }
