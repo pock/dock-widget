@@ -12,8 +12,10 @@ import PockKit
 class DockFolderItemView: NSScrubberItemView {
     
     /// UI
+	public  var index:			Int!
     private var contentView:    NSView!
-    private var frontmostView:  NSView!
+	private var frontmostView:  NSView!
+	private var mouseOverView:  NSView!
     private var iconView:       NSImageView!
     private var nameLabel:      ScrollingTextView!
     private var detailLabel:    NSTextField!
@@ -30,6 +32,19 @@ class DockFolderItemView: NSScrubberItemView {
             m.top.bottom.equalToSuperview()
         })
     }
+	
+	/// Load mouseover view
+	private func loadMouseOverView() {
+		self.mouseOverView = NSView(frame: .zero)
+		self.mouseOverView.wantsLayer = true
+		self.mouseOverView.layer?.masksToBounds = true
+		self.mouseOverView.layer?.cornerRadius = Constants.dockItemCornerRadius
+		self.contentView.addSubview(self.mouseOverView, positioned: .below, relativeTo: self.iconView)
+		self.mouseOverView.snp.makeConstraints({ m in
+			m.left.right.equalToSuperview()
+			m.top.bottom.equalToSuperview()
+		})
+	}
     
     /// Load icon view
     private func loadIconView() {
@@ -126,4 +141,9 @@ class DockFolderItemView: NSScrubberItemView {
         detailLabel.stringValue = detail?.truncate(length: 20) ?? ""
     }
     
+	public func set(isMouseOver: Bool) {
+		if mouseOverView == nil { loadMouseOverView() }
+		mouseOverView.layer?.backgroundColor = (isMouseOver ? NSColor.darkGray : NSColor.clear).cgColor
+	}
+	
 }

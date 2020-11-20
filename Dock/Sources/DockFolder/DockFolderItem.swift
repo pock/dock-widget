@@ -10,6 +10,9 @@ import Foundation
 
 class DockFolderItem: Equatable {
     
+	var diffId: Int {
+		return path?.hashValue ?? name?.hash ?? index.hashValue
+	}
     var index:         Int
     let name:          String?
     let detail:        String?

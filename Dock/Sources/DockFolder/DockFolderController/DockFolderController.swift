@@ -20,6 +20,15 @@ class DockFolderController: PKTouchBarMouseController {
     private var dockFolderRepository: DockFolderRepository!
     private var folderUrl: URL!
     private var elements: [DockFolderItem] = []
+	
+	private var itemViewWithMouseOver: DockFolderItemView?
+	
+	override var parentView: NSView! {
+		get {
+			return scrubber
+		}
+		set { /**/ }
+	}
     
     override func present() {
         guard folderUrl != nil else { return }
@@ -42,17 +51,54 @@ class DockFolderController: PKTouchBarMouseController {
     }
     
     @IBAction func willClose(_ button: NSButton?) {
+		edgeController?.tearDown(invalidate: true)
         dockFolderRepository.popToRootDockFolderController()
     }
     
     @IBAction func willDismiss(_ button: NSButton?) {
-        dockFolderRepository.popDockFolderController()
+		edgeController?.tearDown(invalidate: true)
+		dockFolderRepository.popDockFolderController()
     }
     
     @IBAction func willOpen(_ button: NSButton?) {
         NSWorkspace.shared.open(folderUrl)
         willClose(nil)
     }
+	
+	// MARK: Mouse stuff
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseEnteredAtLocation location: NSPoint) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		super.screenEdgeController(controller, mouseEnteredAtLocation: location)
+	}
+	
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		guard let clipView:   NSClipView   = scrubber.findViews().first,
+			  let scrollView: NSScrollView = scrubber.findViews().first else {
+			return
+		}
+		let maxWidth = scrubber.contentSize.width - scrubber.visibleRect.width
+		let newX     = clipView.bounds.origin.x - delta
+		if maxWidth > 0, (-6...maxWidth+6).contains(newX) {
+			clipView.setBoundsOrigin(NSPoint(x: newX, y: clipView.bounds.origin.y))
+			scrollView.reflectScrolledClipView(clipView)
+		}
+	}
+	
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseClickAtLocation location: NSPoint) {
+		guard let itemView = itemViewWithMouseOver, let item = elements.first(where: { $0.diffId == itemView.index }) else {
+			return
+		}
+		open(item: item)
+	}
+	
+	override func updateCursorLocation(_ location: NSPoint?) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		itemViewWithMouseOver = nil
+		super.updateCursorLocation(location)
+		itemViewWithMouseOver = itemView(at: location)
+		itemViewWithMouseOver?.set(isMouseOver: true)
+	}
     
 }
 
@@ -70,7 +116,10 @@ extension DockFolderController {
         dockFolderRepository.getItems(in: folderUrl) { [weak self] elements in
             self?.elements = elements
             self?.folderDetail?.stringValue = "\(elements.count) " + "elements".localized
-            if reloadScrubber { self?.scrubber.reloadData() }
+            if reloadScrubber {
+				self?.scrubber.reloadData()
+				self?.reloadScreenEdgeController()
+			}
         }
     }
     private func setCurrentFolder(name: String) {
@@ -85,6 +134,7 @@ extension DockFolderController: NSScrubberDataSource {
     func scrubber(_ scrubber: NSScrubber, viewForItemAt index: Int) -> NSScrubberItemView {
         let item = elements[index]
         let view = scrubber.makeItem(withIdentifier: Constants.kDockFolterItemView, owner: self) as! DockFolderItemView
+		view.index = item.diffId
         view.set(icon:   item.icon)
         view.set(name:   item.name)
         view.set(detail: item.detail)
@@ -108,10 +158,26 @@ extension DockFolderController: NSScrubberFlowLayoutDelegate {
 
 extension DockFolderController: NSScrubberDelegate {
     func scrubber(_ scrubber: NSScrubber, didSelectItemAt selectedIndex: Int) {
-        let item = elements[selectedIndex]
-        dockFolderRepository.open(item: item) { success in
-            print("[DockWidget][DockFolderController]: Did open: \(item.path?.path ?? "<unknown>") [success: \(success)]")
-        }
+        open(item: elements[selectedIndex])
         scrubber.selectedIndex = -1
     }
+	private func open(item: DockFolderItem?) {
+		guard let item = item else {
+			return
+		}
+		dockFolderRepository.open(item: item) { success in
+			print("[DockWidget][DockFolderController]: Did open: \(item.path?.path ?? "<unknown>") [success: \(success)]")
+		}
+	}
+}
+
+extension DockFolderController {
+	private func itemView(at location: NSPoint?) -> DockFolderItemView? {
+		guard let location = location, let scrubber = scrubber else {
+			return nil
+		}
+		let loc = NSPoint(x: location.x, y: 12)
+		let views: [DockFolderItemView] = scrubber.findViews()
+		return views.first(where: { $0.superview?.convert($0.frame, to: parentView).contains(loc) == true })
+	}
 }

@@ -12,7 +12,7 @@ import PockKit
 
 class DockFolderRepository {
     
-    private var rootFolderController: DockFolderController?
+    private weak var rootFolderController: DockFolderController?
     
     private var navigationController: PKTouchBarNavigationController? {
         return rootFolderController?.mainNavigationController

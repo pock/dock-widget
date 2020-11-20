@@ -62,8 +62,8 @@ class DockWidget: PKScreenEdgeBaseController, PKWidget {
 		self.view = stackView
 		self.dockRepository = DockRepository(delegate: self)
 		self.dockRepository.reload(nil)
-		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(displayScrubbers), 			 name: .shouldReloadPersistentItems, 	  object: nil)
-		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadScrubbersLayout), 	 name: .shouldReloadScrubbersLayout, 	  object: nil)
+		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(displayScrubbers), 	    name: .shouldReloadPersistentItems, object: nil)
+		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadScrubbersLayout), name: .shouldReloadScrubbersLayout, object: nil)
 	}
 	
 	deinit {
