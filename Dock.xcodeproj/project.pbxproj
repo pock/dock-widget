@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		347419112561B72500C2DD20 /* ScreenEdgeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347419102561B72500C2DD20 /* ScreenEdgeController.swift */; };
 		3474195725645C1600C2DD20 /* SystemSoundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3474195625645C1600C2DD20 /* SystemSoundHelper.swift */; };
 		34BC76D625658C7C00739855 /* DraggingInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BC76D525658C7B00739855 /* DraggingInfoView.swift */; };
 		34D4A1BF246DE4FA005FA975 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34D4A1B7246DE4FA005FA975 /* Localizable.strings */; };
@@ -34,13 +33,14 @@
 		34DF3254246DCECC009B46B9 /* DockWidgetPreferencePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF324D246DCECB009B46B9 /* DockWidgetPreferencePane.swift */; };
 		34DF3255246DCECC009B46B9 /* DockWidgetPreferencePane.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34DF324E246DCECB009B46B9 /* DockWidgetPreferencePane.xib */; };
 		34DF3256246DCECC009B46B9 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3252246DCECB009B46B9 /* Preferences.swift */; };
+		34F1C27D256831CB00AEA158 /* ScreenEdgeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F1C27C256831CB00AEA158 /* ScreenEdgeController.swift */; };
+		34F1C280256831DE00AEA158 /* ScreenEdgeBaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F1C27F256831DE00AEA158 /* ScreenEdgeBaseController.swift */; };
 		54CD33931807DC25EE4C3A6B /* Pods_Dock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0D0E790B706AC130DEB3A405 /* Pods-Dock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dock.release.xcconfig"; path = "Target Support Files/Pods-Dock/Pods-Dock.release.xcconfig"; sourceTree = "<group>"; };
 		1177E54C6982D8AD0A82259D /* Pods-Dock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dock.debug.xcconfig"; path = "Target Support Files/Pods-Dock/Pods-Dock.debug.xcconfig"; sourceTree = "<group>"; };
-		347419102561B72500C2DD20 /* ScreenEdgeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenEdgeController.swift; sourceTree = "<group>"; };
 		3474195625645C1600C2DD20 /* SystemSoundHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSoundHelper.swift; sourceTree = "<group>"; };
 		34AFC98D246DC8E00068B3B6 /* Dock.pock */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dock.pock; sourceTree = BUILT_PRODUCTS_DIR; };
 		34AFC990246DC8E00068B3B6 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -86,6 +86,8 @@
 		34DF3250246DCECB009B46B9 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/DockWidgetPreferencePane.strings"; sourceTree = "<group>"; };
 		34DF3251246DCECB009B46B9 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/DockWidgetPreferencePane.strings; sourceTree = "<group>"; };
 		34DF3252246DCECB009B46B9 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
+		34F1C27C256831CB00AEA158 /* ScreenEdgeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenEdgeController.swift; sourceTree = "<group>"; };
+		34F1C27F256831DE00AEA158 /* ScreenEdgeBaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenEdgeBaseController.swift; sourceTree = "<group>"; };
 		E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -145,6 +147,7 @@
 				34BC76D525658C7B00739855 /* DraggingInfoView.swift */,
 				34DF3246246DCE2C009B46B9 /* Bridging-Header.h */,
 				34DF3247246DCECB009B46B9 /* Preferences */,
+				34F1C27B256831CB00AEA158 /* ScreenEdgeController */,
 				34DF3245246DCDDD009B46B9 /* Helpers */,
 			);
 			path = Sources;
@@ -229,7 +232,6 @@
 			isa = PBXGroup;
 			children = (
 				34DF3241246DCDD8009B46B9 /* PockDockHelper */,
-				347419102561B72500C2DD20 /* ScreenEdgeController.swift */,
 				3474195625645C1600C2DD20 /* SystemSoundHelper.swift */,
 			);
 			path = Helpers;
@@ -252,6 +254,15 @@
 				34DF324E246DCECB009B46B9 /* DockWidgetPreferencePane.xib */,
 			);
 			path = DockWidgetPreferencePane;
+			sourceTree = "<group>";
+		};
+		34F1C27B256831CB00AEA158 /* ScreenEdgeController */ = {
+			isa = PBXGroup;
+			children = (
+				34F1C27C256831CB00AEA158 /* ScreenEdgeController.swift */,
+				34F1C27F256831DE00AEA158 /* ScreenEdgeBaseController.swift */,
+			);
+			path = ScreenEdgeController;
 			sourceTree = "<group>";
 		};
 		A207221C2E07CE53C611D88F /* Frameworks */ = {
@@ -396,10 +407,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34F1C27D256831CB00AEA158 /* ScreenEdgeController.swift in Sources */,
 				34DF3231246DCCE8009B46B9 /* AppExposeItem.swift in Sources */,
 				34DF3233246DCCE8009B46B9 /* AppExposeController.swift in Sources */,
 				34DF3237246DCCE8009B46B9 /* EventStream.swift in Sources */,
-				347419112561B72500C2DD20 /* ScreenEdgeController.swift in Sources */,
 				34DF3234246DCCE8009B46B9 /* FileMonitor.swift in Sources */,
 				34BC76D625658C7C00739855 /* DraggingInfoView.swift in Sources */,
 				34DF3230246DCCE8009B46B9 /* DockWidget.swift in Sources */,
@@ -415,6 +426,7 @@
 				34DF3238246DCCE8009B46B9 /* Witness.swift in Sources */,
 				34DF323E246DCCE8009B46B9 /* DockFolderItemView.swift in Sources */,
 				34DF3254246DCECC009B46B9 /* DockWidgetPreferencePane.swift in Sources */,
+				34F1C280256831DE00AEA158 /* ScreenEdgeBaseController.swift in Sources */,
 				34DF3236246DCCE8009B46B9 /* FileEvent.swift in Sources */,
 				34DF3239246DCCE8009B46B9 /* DockFolderItem.swift in Sources */,
 			);

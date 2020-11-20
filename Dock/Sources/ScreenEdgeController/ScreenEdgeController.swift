@@ -8,18 +8,24 @@
 
 import AppKit
 
+extension NSColor {
+	static var random: NSColor {
+		return NSColor(red: .random(in: 0...1), green: .random(in: 0...1), blue: .random(in: 0...1), alpha: 1)
+	}
+}
+
 @objc public protocol ScreenEdgeMouseDelegate: class {
 	/// Required
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseEnteredAtLocation location: NSPoint)
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseMovedAtLocation 	 location: NSPoint)
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseClickAtLocation 	 location: NSPoint)
 	func screenEdgeController(_ controller: ScreenEdgeController, mouseExitedAtLocation  location: NSPoint)
-	func screenEdgeController(_ controller: ScreenEdgeController, draggingEntered 	   info: NSDraggingInfo, filepath: String) -> NSDragOperation
-	func screenEdgeController(_ controller: ScreenEdgeController, draggingUpdated 	   info: NSDraggingInfo, filepath: String) -> NSDragOperation
-	func screenEdgeController(_ controller: ScreenEdgeController, performDragOperation info: NSDraggingInfo, filepath: String) -> Bool
-	func screenEdgeController(_ controller: ScreenEdgeController, draggingEnded 	   info: NSDraggingInfo)
 	/// Optionals
 	@objc optional func screenEdgeController(_ controller: ScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint)
+	@objc optional func screenEdgeController(_ controller: ScreenEdgeController, draggingEntered 	  info: NSDraggingInfo, filepath: String) -> NSDragOperation
+	@objc optional func screenEdgeController(_ controller: ScreenEdgeController, draggingUpdated 	  info: NSDraggingInfo, filepath: String) -> NSDragOperation
+	@objc optional func screenEdgeController(_ controller: ScreenEdgeController, performDragOperation info: NSDraggingInfo, filepath: String) -> Bool
+	@objc optional func screenEdgeController(_ controller: ScreenEdgeController, draggingEnded 	   	  info: NSDraggingInfo)
 }
 
 @objc public class ScreenEdgeController: NSWindowController {
@@ -59,8 +65,8 @@ import AppKit
 		window?.animationBehavior    	  = .none
 		window?.hasShadow  				  = false
 		window?.isOpaque   				  = false
-		window?.backgroundColor 		  = .red
-		window?.alphaValue 				  = 0
+		window?.backgroundColor 		  = .random
+		window?.alphaValue 				  = 1
 		/// Dragging support
 		window?.registerForDraggedTypes([.URL, .fileURL, .filePromise])
 		/// Create controller
@@ -153,7 +159,7 @@ extension ScreenEdgeController: NSDraggingDestination {
 			  let path = pasteboard[0] as? String else {
 			return NSDragOperation()
 		}
-		return delegate.screenEdgeController(self, draggingEntered: sender, filepath: path)
+		return delegate.screenEdgeController?(self, draggingEntered: sender, filepath: path) ?? NSDragOperation()
 	}
 	
 	public func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
@@ -162,7 +168,7 @@ extension ScreenEdgeController: NSDraggingDestination {
 			  let path = pasteboard[0] as? String else {
 			return NSDragOperation()
 		}
-		return delegate.screenEdgeController(self, draggingUpdated: sender, filepath: path)
+		return delegate.screenEdgeController?(self, draggingUpdated: sender, filepath: path) ?? NSDragOperation()
 	}
 	
 	public func draggingExited(_ sender: NSDraggingInfo?) {
@@ -176,7 +182,7 @@ extension ScreenEdgeController: NSDraggingDestination {
 		guard let delegate = mouseDelegate else {
 			return
 		}
-		delegate.screenEdgeController(self, draggingEnded: sender)
+		delegate.screenEdgeController?(self, draggingEnded: sender)
 	}
 	
 	public func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
@@ -185,7 +191,7 @@ extension ScreenEdgeController: NSDraggingDestination {
 			  let path = pasteboard[0] as? String else {
 			return false
 		}
-		return delegate.screenEdgeController(self, performDragOperation: sender, filepath: path)
+		return delegate.screenEdgeController?(self, performDragOperation: sender, filepath: path) ?? false
 	}
 	
 }
