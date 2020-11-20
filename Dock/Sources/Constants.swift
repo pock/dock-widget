@@ -11,7 +11,8 @@ import Defaults
 
 class Constants {
     /// Known identifiers
-    static let kFinderIdentifier: String = "com.apple.finder"
+    static let kFinderIdentifier: 	 String = "com.apple.finder"
+	static let kLaunchpadIdentifier: String = "com.apple.launchpad.launcher"
     /// Known paths
     static let dockPlist = NSHomeDirectory().appending("/Library/Preferences/com.apple.dock.plist")
     static let trashPath = NSHomeDirectory().appending("/.Trash")

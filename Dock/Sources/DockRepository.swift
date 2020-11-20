@@ -13,7 +13,7 @@ protocol DockDelegate: class {
     func didUpdate(apps: [DockItem])
     func didUpdate(items: [DockItem])
     func didUpdateBadge(for apps: [DockItem])
-    func didUpdateRunningState(for apps: [DockItem])
+	func didUpdateRunningState(for apps: [DockItem], shouldScroll: Bool)
 }
 
 class DockRepository {
@@ -26,6 +26,7 @@ class DockRepository {
     private var showOnlyRunningApps: Bool { return Defaults[.showOnlyRunningApps] }
     private var openFinderInsidePock: Bool { return Defaults[.openFinderInsidePock] }
     private var dockFolderRepository: DockFolderRepository?
+	private var keyValueObservers: [NSKeyValueObservation] = []
     
     /// Running applications
     public  var dockItems:       [DockItem] = []
@@ -60,7 +61,7 @@ class DockRepository {
             loadPersistentApps()
         }
         loadRunningApplications(notification)
-        updateRunningState(notification)
+		updateRunningState(for: NSWorkspace.shared.runningApplications)
     }
     
     @objc public func reloadPersistentItems(_ notification: NSNotification?) {
@@ -76,28 +77,40 @@ class DockRepository {
     /// Unregister from notification
     private func unregisterForNotifications() {
         fileMonitor = nil
+		keyValueObservers.forEach { $0.invalidate() }
+		keyValueObservers.removeAll()
         NSWorkspace.shared.notificationCenter.removeObserver(self)
     }
     
     /// Register for notification
     private func registerForNotifications() {
-        NSWorkspace.shared.notificationCenter.addObserver(self,
-                                                          selector: #selector(reloadDock(_:)),
-                                                          name: NSWorkspace.willLaunchApplicationNotification,
-                                                          object: nil)
+		self.keyValueObservers = [
+			NSWorkspace.shared.observe(\.runningApplications, options: [.old, .new], changeHandler: { [weak self] _, change in
+				if let apps = change.newValue {
+					for app in apps {
+						if (self?.dockItems ?? []).map({ $0.bundleIdentifier }).contains(app.bundleIdentifier) {
+							self?.updateRunningState(for: [app], wasLaunched: true, shouldScroll: true)
+						}
+					}
+				}else if let apps = change.oldValue {
+					for app in apps {
+						if (self?.dockItems ?? []).map({ $0.bundleIdentifier }).contains(app.bundleIdentifier) {
+							self?.updateRunningState(for: [app], wasTerminated: true)
+						}
+					}
+				}else {
+					self?.updateRunningState(for: NSWorkspace.shared.runningApplications)
+				}
+			})
+		]
 
         NSWorkspace.shared.notificationCenter.addObserver(self,
-                                                          selector: #selector(updateRunningState(_:)),
-                                                          name: NSWorkspace.didLaunchApplicationNotification,
-                                                          object: nil)
-
-        NSWorkspace.shared.notificationCenter.addObserver(self,
-                                                          selector: #selector(updateRunningState(_:)),
+                                                          selector: #selector(updateActiveState(_:)),
                                                           name: NSWorkspace.didActivateApplicationNotification,
                                                           object: nil)
 
         NSWorkspace.shared.notificationCenter.addObserver(self,
-                                                          selector: #selector(updateRunningState(_:)),
+                                                          selector: #selector(updateActiveState(_:)),
                                                           name: NSWorkspace.didDeactivateApplicationNotification,
                                                           object: nil)
 
@@ -135,10 +148,8 @@ class DockRepository {
         runningItems = []
         for app in NSWorkspace.shared.runningApplications {
             if let item = dockItems.first(where: { $0.bundleIdentifier == app.bundleIdentifier }) {
-                item.name        = app.localizedName ?? item.name
-                item.icon        = app.icon ?? item.icon
-                item.pid_t       = app.processIdentifier
-                item.isLaunching = !app.isFinishedLaunching
+                item.name  = app.localizedName ?? item.name
+                item.icon  = app.icon ?? item.icon
                 runningItems.append(item)
             }else {
                 /// Check for policy
@@ -147,7 +158,7 @@ class DockRepository {
                 guard   let localizedName = app.localizedName,
                         let bundleURL     = app.bundleURL,
                         let icon          = app.icon else { continue }
-                let item = DockItem(0, id, name: localizedName, path: bundleURL, icon: icon, pid_t: app.processIdentifier, launching: !app.isFinishedLaunching)
+                let item = DockItem(0, id, name: localizedName, path: bundleURL, icon: icon, pid_t: app.processIdentifier, launching: app.isFinishedLaunching == false)
                 runningItems.append(item)
                 dockItems.append(item)
             }
@@ -243,37 +254,34 @@ class DockRepository {
     }
     
     /// Load running dot
-    @objc private func updateRunningState(_ notification: NSNotification?) {
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            guard let s = self else { return }
-            for item in s.dockItems {
-                item.pid_t = NSWorkspace.shared.runningApplications.first(where: { $0.bundleIdentifier == item.bundleIdentifier })?.processIdentifier ?? 0
-            }
-            s.delegate?.didUpdateRunningState(for: s.dockItems)
-            s.updateBouncing(for: notification)
-        }
-    }
-    
-    /// Update bouncing
-    private func updateBouncing(for notification: NSNotification?) {
-        if notification?.name == NSWorkspace.willLaunchApplicationNotification {
-            if let app = notification?.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
-                if let item = dockItems.first(where: { $0.bundleIdentifier == app.bundleIdentifier }), !item.isLaunching {
-                    item.isLaunching = true
-                    delegate?.didUpdateRunningState(for: dockItems)
-                }
-            }
-        }else if notification?.name == NSWorkspace.didLaunchApplicationNotification ||
-                 notification?.name == NSWorkspace.didActivateApplicationNotification {
-            if let app = notification?.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
-                if let item = dockItems.first(where: { $0.bundleIdentifier == app.bundleIdentifier }), item.isLaunching {
-                    item.isLaunching = false
-                    delegate?.didUpdateRunningState(for: dockItems)
-                }
-            }
-        }
-    }
-    
+	private func updateRunningState(for runningApps: [NSRunningApplication], wasLaunched: Bool = false, wasTerminated: Bool = false, shouldScroll: Bool = false) {
+		DispatchQueue.main.async { [weak self, runningApps] in
+			for app in runningApps {
+				guard let item = (self?.dockItems ?? []).first(where: { $0.bundleIdentifier == app.bundleIdentifier }) else {
+					continue
+				}
+				item.icon  		 = app.icon ?? item.icon
+				item.pid_t 		 = wasTerminated ? 0 : app.processIdentifier
+				item.isLaunching = app.bundleIdentifier != Constants.kLaunchpadIdentifier && wasLaunched == true
+				self?.delegate?.didUpdateRunningState(for: [item], shouldScroll: shouldScroll)
+			}
+		}
+	}
+	
+	/// Load active state
+	@objc private func updateActiveState(_ notification: NSNotification?) {
+		DispatchQueue.main.async { [weak self, notification] in
+			if let app = notification?.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
+				if let item = self?.dockItems.first(where: { $0.bundleIdentifier == app.bundleIdentifier }) {
+					item.isLaunching = false
+					self?.delegate?.didUpdateRunningState(for: [item], shouldScroll: notification?.name == NSWorkspace.didActivateApplicationNotification)
+				}
+			}else {
+				self?.delegate?.didUpdateRunningState(for: self?.dockItems ?? [], shouldScroll: false)
+			}
+		}
+	}
+	
     /// Load notification badges
     private func updateNotificationBadges() {
         guard shouldShowNotificationBadge else { return }

@@ -221,19 +221,20 @@ extension DockWidget: DockDelegate {
             })
         }
     }
-    func didUpdateRunningState(for apps: [DockItem]) {
-        DispatchQueue.main.async { [weak self] in
-            guard let s = self else { return }
-            s.cachedDockItemViews.forEach({ key, view in
-                let item = apps.first(where: { $0.diffId == key })
-                view.set(isRunning:   item?.isRunning   ?? false)
-                view.set(isFrontmost: item?.isFrontmost ?? false)
-                view.set(isLaunching: item?.isLaunching ?? false)
-				if let i = item, i.isFrontmost && !i.isPersistentItem {
-					let adjust = apps.count > (i.index + 1) ? 1 : 0
-					s.dockScrubber?.animator().scrollItem(at: i.index + adjust, to: .center)
+	func didUpdateRunningState(for apps: [DockItem], shouldScroll: Bool) {
+        DispatchQueue.main.async { [weak self, apps, shouldScroll] in
+            guard let self = self else { return }
+			for item in apps {
+				if let itemView = self.itemView(for: item) {
+					itemView.set(isRunning:   item.isRunning)
+					itemView.set(isFrontmost: item.isFrontmost)
+					itemView.set(isLaunching: item.isLaunching)
+					if shouldScroll, item.isPersistentItem == false, item.isFrontmost == true {
+						let adjust = self.dockItems.count > (item.index + 1) ? 1 : 0
+						self.dockScrubber?.animator().scrollItem(at: item.index + adjust, to: .center)
+					}
 				}
-            })
+			}
         }
     }
 }
@@ -274,12 +275,10 @@ extension DockWidget: NSScrubberDelegate {
 		guard let item = item else {
 			return
 		}
-		if !item.isPersistentItem, !item.isRunning, let itemView = itemView(for: item) {
+		if !item.isPersistentItem, !item.isRunning, item.bundleIdentifier != Constants.kLaunchpadIdentifier, let itemView = itemView(for: item) {
 			itemView.set(isLaunching: true)
 		}
-		var result: Bool = false
-		dockRepository.launch(item: item, completion: { result = $0 })
-		print("[DockWidget]: Did open: \(item.bundleIdentifier ?? item.path?.absoluteString ?? "Unknown") [success: \(result)]")
+		dockRepository.launch(item: item, completion: { _ in })
 	}
 }
 
