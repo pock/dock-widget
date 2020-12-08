@@ -3,7 +3,7 @@
 
 ## No Pods folder
 Podfile.lock
-Pods/
+Pods
 
 ## No Carthage folder
 Cartfile.resolved
