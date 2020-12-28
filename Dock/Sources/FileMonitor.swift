@@ -31,7 +31,7 @@ class FileMonitor {
     }
     
     private func startObserving() {
-        self.witness = Witness(paths: paths, flags: .FileEvents, latency: 0, changeHandler: { [weak self] events in
+		self.witness = Witness(paths: paths, flags: .FileEvents, latency: 0.1, changeHandler: { [weak self] events in
             guard let s = self else { return }
             self?.delegate?.didChange(fileMonitor: s, paths: events.map({ $0.path }))
         })

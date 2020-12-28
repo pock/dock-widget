@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		3474195725645C1600C2DD20 /* SystemSoundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3474195625645C1600C2DD20 /* SystemSoundHelper.swift */; };
+		34C64DAD25699186006CB7F4 /* DockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C64DAC25699186006CB7F4 /* DockRepository.swift */; };
+		34C64DF4256ACA37006CB7F4 /* Pods_Dock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */; };
 		34D4A1BF246DE4FA005FA975 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34D4A1B7246DE4FA005FA975 /* Localizable.strings */; };
 		34DF322F246DCCE8009B46B9 /* DockItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3210246DCCE7009B46B9 /* DockItemView.swift */; };
 		34DF3230246DCCE8009B46B9 /* DockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3211246DCCE7009B46B9 /* DockWidget.swift */; };
@@ -25,14 +27,12 @@
 		34DF323C246DCCE8009B46B9 /* DockFolderController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34DF3226246DCCE8009B46B9 /* DockFolderController.xib */; };
 		34DF323D246DCCE8009B46B9 /* DockFolderRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF322A246DCCE8009B46B9 /* DockFolderRepository.swift */; };
 		34DF323E246DCCE8009B46B9 /* DockFolderItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF322C246DCCE8009B46B9 /* DockFolderItemView.swift */; };
-		34DF323F246DCCE8009B46B9 /* DockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF322D246DCCE8009B46B9 /* DockRepository.swift */; };
 		34DF3240246DCCE8009B46B9 /* DockItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF322E246DCCE8009B46B9 /* DockItem.swift */; };
 		34DF3244246DCDD9009B46B9 /* PockDockHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3243246DCDD8009B46B9 /* PockDockHelper.m */; };
 		34DF3253246DCECC009B46B9 /* DockWidgetPreferencePane.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34DF3249246DCECB009B46B9 /* DockWidgetPreferencePane.strings */; };
 		34DF3254246DCECC009B46B9 /* DockWidgetPreferencePane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF324D246DCECB009B46B9 /* DockWidgetPreferencePane.swift */; };
 		34DF3255246DCECC009B46B9 /* DockWidgetPreferencePane.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34DF324E246DCECB009B46B9 /* DockWidgetPreferencePane.xib */; };
 		34DF3256246DCECC009B46B9 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3252246DCECB009B46B9 /* Preferences.swift */; };
-		54CD33931807DC25EE4C3A6B /* Pods_Dock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +42,9 @@
 		34AFC98D246DC8E00068B3B6 /* Dock.pock */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dock.pock; sourceTree = BUILT_PRODUCTS_DIR; };
 		34AFC990246DC8E00068B3B6 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		34AFC994246DC8E00068B3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		34C64DAC25699186006CB7F4 /* DockRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockRepository.swift; sourceTree = "<group>"; };
+		34C64DE0256AC8EB006CB7F4 /* AXSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AXSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		34C64DF8256ACA72006CB7F4 /* AXSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AXSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		34D4A1B8246DE4FA005FA975 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		34D4A1B9246DE4FA005FA975 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		34D4A1BA246DE4FA005FA975 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -69,7 +72,6 @@
 		34DF3229246DCCE8009B46B9 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/DockFolderController.strings; sourceTree = "<group>"; };
 		34DF322A246DCCE8009B46B9 /* DockFolderRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockFolderRepository.swift; sourceTree = "<group>"; };
 		34DF322C246DCCE8009B46B9 /* DockFolderItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockFolderItemView.swift; sourceTree = "<group>"; };
-		34DF322D246DCCE8009B46B9 /* DockRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockRepository.swift; sourceTree = "<group>"; };
 		34DF322E246DCCE8009B46B9 /* DockItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DockItem.swift; sourceTree = "<group>"; };
 		34DF3242246DCDD8009B46B9 /* PockDockHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PockDockHelper.h; sourceTree = "<group>"; };
 		34DF3243246DCDD8009B46B9 /* PockDockHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PockDockHelper.m; sourceTree = "<group>"; };
@@ -90,7 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54CD33931807DC25EE4C3A6B /* Pods_Dock.framework in Frameworks */,
+				34C64DF4256ACA37006CB7F4 /* Pods_Dock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +137,7 @@
 				34DF3218246DCCE8009B46B9 /* Constants.swift */,
 				34DF322E246DCCE8009B46B9 /* DockItem.swift */,
 				34DF3210246DCCE7009B46B9 /* DockItemView.swift */,
-				34DF322D246DCCE8009B46B9 /* DockRepository.swift */,
+				34C64DAC25699186006CB7F4 /* DockRepository.swift */,
 				34DF3211246DCCE7009B46B9 /* DockWidget.swift */,
 				34DF3217246DCCE8009B46B9 /* FileMonitor.swift */,
 				34DF3246246DCE2C009B46B9 /* Bridging-Header.h */,
@@ -259,6 +261,8 @@
 		A207221C2E07CE53C611D88F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				34C64DF8256ACA72006CB7F4 /* AXSwift.framework */,
+				34C64DE0256AC8EB006CB7F4 /* AXSwift.framework */,
 				E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */,
 			);
 			name = Frameworks;
@@ -284,6 +288,7 @@
 				34AFC988246DC8E00068B3B6 /* Sources */,
 				34AFC989246DC8E00068B3B6 /* Frameworks */,
 				34AFC98A246DC8E00068B3B6 /* Resources */,
+				34C64E05256ACC2D006CB7F4 /* [CP] Embed Pods Frameworks */,
 				34AFC98B246DC8E00068B3B6 /* Copy widget to destination folder */,
 			);
 			buildRules = (
@@ -369,6 +374,31 @@
 			shellPath = /bin/sh;
 			shellScript = "# Copy widget to destination folder.\necho \"Copying ${PRODUCT_NAME}.pock to destination folder\"\ncp -r $TARGET_BUILD_DIR/$PRODUCT_NAME.pock ~/Library/Application\\ Support/Pock/Widgets/\n";
 		};
+		34C64E05256ACC2D006CB7F4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Dock/Pods-Dock-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Defaults/Defaults.framework",
+				"${BUILT_PRODUCTS_DIR}/PockKit/PockKit.framework",
+				"${BUILT_PRODUCTS_DIR}/AXSwift/AXSwift.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Defaults.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PockKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AXSwift.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Dock/Pods-Dock-frameworks.sh\"\n";
+		};
 		C44FAF037AD2D66BDB3B25EE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -399,6 +429,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34DF3231246DCCE8009B46B9 /* AppExposeItem.swift in Sources */,
+				34C64DAD25699186006CB7F4 /* DockRepository.swift in Sources */,
 				34DF3233246DCCE8009B46B9 /* AppExposeController.swift in Sources */,
 				34DF3237246DCCE8009B46B9 /* EventStream.swift in Sources */,
 				34DF3234246DCCE8009B46B9 /* FileMonitor.swift in Sources */,
@@ -408,7 +439,6 @@
 				3474195725645C1600C2DD20 /* SystemSoundHelper.swift in Sources */,
 				34DF322F246DCCE8009B46B9 /* DockItemView.swift in Sources */,
 				34DF3256246DCECC009B46B9 /* Preferences.swift in Sources */,
-				34DF323F246DCCE8009B46B9 /* DockRepository.swift in Sources */,
 				34DF3244246DCDD9009B46B9 /* PockDockHelper.m in Sources */,
 				34DF3240246DCCE8009B46B9 /* DockItem.swift in Sources */,
 				34DF3235246DCCE8009B46B9 /* Constants.swift in Sources */,
@@ -483,6 +513,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -505,6 +536,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -541,6 +573,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -563,6 +596,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -585,6 +619,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
 		};
@@ -592,9 +627,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1177E54C6982D8AD0A82259D /* Pods-Dock.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 788D9WZ9Z3;
@@ -620,9 +654,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0D0E790B706AC130DEB3A405 /* Pods-Dock.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 788D9WZ9Z3;
