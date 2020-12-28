@@ -109,6 +109,7 @@ extension DockFolderController {
             self?.folderDetail?.stringValue = "\(elements.count) " + "elements".localized
             if reloadScrubber {
 				self?.scrubber.reloadData()
+				self?.scrubber.scrollItem(at: 0, to: .none)
 				self?.reloadScreenEdgeController()
 			}
         }
