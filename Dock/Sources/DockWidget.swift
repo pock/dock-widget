@@ -338,7 +338,7 @@ extension DockWidget: DockDelegate {
 	
 	func didUpdateActiveItem(_ item: DockItem, at index: Int, activated: Bool) {
 		DispatchQueue.main.async { [weak self] in
-			guard let view = self?.cachedDockItemViews.first(where: { $0.key == item.diffId })?.value else {
+			guard let index = self?.dockItems.firstIndex(of: item), let view = self?.cachedDockItemViews.first(where: { $0.key == item.diffId })?.value else {
 				return
 			}
 			view.set(isFrontmost: activated)
