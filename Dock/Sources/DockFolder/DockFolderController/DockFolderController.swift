@@ -8,6 +8,7 @@
 
 import Foundation
 import PockKit
+import Defaults
 
 class DockFolderController: PKTouchBarMouseController {
     
@@ -112,6 +113,13 @@ class DockFolderController: PKTouchBarMouseController {
 			return
 		}
 		open(item: item)
+	}
+	
+	override func showCursor(_ cursor: NSCursor?, at location: NSPoint?) {
+		guard Defaults[.showCursor] else {
+			return
+		}
+		super.showCursor(cursor, at: location)
 	}
 	
 	override func updateCursorLocation(_ location: NSPoint?) {
