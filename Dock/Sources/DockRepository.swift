@@ -367,18 +367,18 @@ extension DockRepository {
 		guard shouldShowNotificationBadge else {
 			return
 		}
-//		DockHelper.default.reloadAllDockItems { [weak self] tiles in
-//			guard let self = self, let delegate = self.dockDelegate else {
-//				return
-//			}
-//			for tile in tiles {
-//				guard let tile = tile as? DockApplicationTile, let item = self.dockItems.first(where: { $0.bundleIdentifier == tile.bundleIdentifier }) else {
-//					continue
-//				}
-//				item.badge = tile.badge
-//			}
-//			delegate.didUpdateBadge(for: self.dockItems)
-//		}
+		DockHelper.default.reloadAllDockItems { [weak self] tiles in
+			guard let self = self, let delegate = self.dockDelegate else {
+				return
+			}
+			for tile in tiles {
+				guard let tile = tile as? DockApplicationTile, let item = self.dockItems.first(where: { $0.bundleIdentifier == tile.bundleIdentifier }) else {
+					continue
+				}
+				item.badge = tile.badge
+			}
+			delegate.didUpdateBadge(for: self.dockItems)
+		}
 	}
 }
 
