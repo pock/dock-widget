@@ -12,9 +12,12 @@ import PockKit
 class DockFolderController: PKTouchBarMouseController {
     
     /// UI
+	@IBOutlet private weak var closeButton:  NSButton!
     @IBOutlet private weak var folderName:   NSTextField!
     @IBOutlet private weak var folderDetail: NSTextField!
     @IBOutlet private weak var scrubber:     NSScrubber!
+	@IBOutlet private weak var backButton:   NSButton!
+	@IBOutlet private weak var openButton:	 NSButton!
     
     /// Core
     private var dockFolderRepository: DockFolderRepository!
@@ -22,10 +25,24 @@ class DockFolderController: PKTouchBarMouseController {
     private var elements: [DockFolderItem] = []
 	
 	private var itemViewWithMouseOver: DockFolderItemView?
+	private var buttonWithMouseOver:   NSButton?
+	private var touchBarView: NSView {
+		if let view = openButton.superview(subclassOf: NSTouchBarView.self) {
+			return view
+		}
+		fatalError("Can't find NSTouchBarView object.")
+	}
+	
+	override var visibleRectWidth: CGFloat {
+		get {
+			return touchBarView.visibleRect.width
+		}
+		set { /**/ }
+	}
 	
 	override var parentView: NSView! {
 		get {
-			return scrubber
+			return touchBarView
 		}
 		set { /**/ }
 	}
@@ -77,6 +94,20 @@ class DockFolderController: PKTouchBarMouseController {
 	}
 	
 	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseClickAtLocation location: NSPoint) {
+		/// Check for button
+		if let button = button(at: location) {
+			switch button {
+			case backButton:
+				willDismiss(button)
+			case openButton:
+				willOpen(button)
+			case closeButton:
+				willClose(button)
+			default:
+				break
+			}
+			return
+		}
 		guard let itemView = itemViewWithMouseOver, let item = elements.first(where: { $0.diffId == itemView.index }) else {
 			return
 		}
@@ -89,6 +120,14 @@ class DockFolderController: PKTouchBarMouseController {
 		super.updateCursorLocation(location)
 		itemViewWithMouseOver = itemView(at: location)
 		itemViewWithMouseOver?.set(isMouseOver: true)
+		updateButtonWithMouseOverHilight(location)
+	}
+	
+	private func updateButtonWithMouseOverHilight(_ location: NSPoint?) {
+		buttonWithMouseOver?.isHighlighted = false
+		buttonWithMouseOver = nil
+		buttonWithMouseOver = button(at: location)
+		buttonWithMouseOver?.isHighlighted = true
 	}
     
 }
@@ -109,7 +148,9 @@ extension DockFolderController {
             self?.folderDetail?.stringValue = "\(elements.count) " + "elements".localized
             if reloadScrubber {
 				self?.scrubber.reloadData()
-				self?.scrubber.scrollItem(at: 0, to: .none)
+				if elements.isEmpty == false {
+					self?.scrubber.scrollItem(at: 0, to: .none)
+				}
 				self?.reloadScreenEdgeController()
 			}
         }
@@ -164,12 +205,26 @@ extension DockFolderController: NSScrubberDelegate {
 }
 
 extension DockFolderController {
-	private func itemView(at location: NSPoint?) -> DockFolderItemView? {
-		guard let location = location, let scrubber = scrubber else {
+	private func subview<T: NSView>(in view: NSView?, at location: NSPoint?, of type: T.Type = T.self) -> T? {
+		guard let view = view, let location = location else {
 			return nil
 		}
 		let loc = NSPoint(x: location.x, y: 12)
-		let views: [DockFolderItemView] = scrubber.findViews()
+		let views = view.findViews(subclassOf: type)
 		return views.first(where: { $0.superview?.convert($0.frame, to: parentView).contains(loc) == true })
+	}
+	
+	private func itemView(at location: NSPoint?) -> DockFolderItemView? {
+		guard let scrubber = scrubber else {
+			return nil
+		}
+		return subview(in: scrubber, at: location, of: DockFolderItemView.self)
+	}
+	
+	private func button(at location: NSPoint?) -> NSButton? {
+		guard let view = subview(in: parentView, at: location, of: NSTouchBarItemContainerView.self) else {
+			return nil
+		}
+		return view.findViews(subclassOf: NSButton.self).first
 	}
 }

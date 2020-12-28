@@ -60,4 +60,10 @@ extension NSView {
 	var recursiveSubviews: [NSView] {
 		return subviews + subviews.flatMap { $0.recursiveSubviews }
 	}
+	func superview<T: NSView>(subclassOf type: T.Type = T.self) -> T? {
+		guard let view = superview else {
+			return nil
+		}
+		return view as? T ?? view.superview(subclassOf: type)
+	}
 }

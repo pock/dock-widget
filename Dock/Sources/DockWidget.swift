@@ -34,7 +34,10 @@ class DockWidget: PKScreenEdgeBaseController, PKWidget {
 	}
 	
 	override var parentView: NSView? {
-		get { return view } set { /**/ }
+		get {
+			return view
+		}
+		set { /**/ }
 	}
 	private var dropDispatchWorkItem: DispatchWorkItem?
 	

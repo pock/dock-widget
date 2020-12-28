@@ -249,6 +249,9 @@ extension DockRepository {
 								icon: DockRepository.getIcon(orPath: path.replacingOccurrences(of: "file://", with: "")),
 								launching: false,
 								persistentItem: true)
+			if persistentItems.contains(item) == false {
+				persistentItems.append(item)
+			}
 			tmpPersistentItems.append(item)
 			dockDelegate?.didUpdatePersistentItem(item, at: index, added: true)
 		}
@@ -260,8 +263,14 @@ extension DockRepository {
 		/// Handle Trash
 		if !Defaults[.hideTrash] && !persistentItems.contains(where: { $0.path?.absoluteString == Constants.trashPath }) {
 			let trashType = ((try? FileManager.default.contentsOfDirectory(atPath: Constants.trashPath).isEmpty) ?? true) ? "TrashIcon" : "FullTrashIcon"
-			let item = DockItem(self.persistentItems.count, nil, name: "Trash", path: URL(string: "file://"+Constants.trashPath)!, icon: DockRepository.getIcon(orType: trashType), persistentItem: true)
-			tmpPersistentItems.append(item)
+			let item = DockItem(
+				self.persistentItems.count,
+				nil,
+				name: "Trash",
+				path: URL(string: "file://"+Constants.trashPath)!,
+				icon: DockRepository.getIcon(orType: trashType),
+				persistentItem: true)
+			persistentItems.append(item)
 			dockDelegate?.didUpdatePersistentItem(item, at: item.index, added: true)
 		}
 	}

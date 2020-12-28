@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+@interface NSTouchBarView: NSView
+@end
+
+@interface NSTouchBarItemContainerView: NSTouchBarView
+@end
+
 extern AXError _AXUIElementGetWindow(AXUIElementRef window, CGWindowID *windowID);
 
 @interface CGWindowItem : NSObject

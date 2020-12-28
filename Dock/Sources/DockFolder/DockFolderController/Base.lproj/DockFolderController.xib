@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaDFRPlugin" version="14460.1"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaDFRPlugin" version="17008"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
         <capability name="System colors introduced in macOS 10.14" minToolsVersion="10.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
         <capability name="the Touch Bar" minToolsVersion="8.1" minSystemVersion="10.12.2" requiredIntegratedClassName="NSTouchBar"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="DockFolderController" customModule="Pock" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="DockFolderController" customModule="Dock" customModuleProvider="target">
             <connections>
+                <outlet property="backButton" destination="Edq-Kc-xgh" id="2Rn-fP-7jb"/>
+                <outlet property="closeButton" destination="pSB-f1-hKM" id="eH8-rG-oPT"/>
                 <outlet property="folderDetail" destination="ity-zH-1YM" id="1fL-oL-3xP"/>
                 <outlet property="folderName" destination="CkE-us-uZe" id="WZP-Ui-4Nr"/>
+                <outlet property="openButton" destination="w3b-hX-6wx" id="TlM-fR-JEC"/>
                 <outlet property="scrubber" destination="6Ry-8M-2Bw" id="e7O-pb-Qwx"/>
                 <outlet property="touchBar" destination="0ER-a6-6K6" id="IY0-kY-SZS"/>
             </connections>
@@ -101,7 +104,6 @@
                     <viewController key="viewController" id="HqF-wF-zsk">
                         <scrubber key="view" mode="1" showsAdditionalContentIndicators="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Ry-8M-2Bw">
                             <rect key="frame" x="0.0" y="0.0" width="401" height="30"/>
-                            <autoresizingMask key="autoresizingMask"/>
                             <scrubberFlowLayout key="scrubberLayout" itemSpacing="16">
                                 <size key="itemSize" width="120" height="30"/>
                             </scrubberFlowLayout>
