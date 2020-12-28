@@ -39,6 +39,18 @@ extension NSScrubber {
 	internal var contentSize: NSSize {
 		return scrubberLayout.scrubberContentSize
 	}
+	internal func scroll(with delta: CGFloat) {
+		guard let clipView:   NSClipView   = findViews().first,
+			  let scrollView: NSScrollView = findViews().first else {
+			return
+		}
+		let maxWidth = contentSize.width - visibleRect.width
+		let newX     = clipView.bounds.origin.x - delta
+		if maxWidth > 0, (-6...maxWidth+6).contains(newX) {
+			clipView.setBoundsOrigin(NSPoint(x: newX, y: clipView.bounds.origin.y))
+			scrollView.reflectScrolledClipView(clipView)
+		}
+	}
 }
 
 extension NSView {

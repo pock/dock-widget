@@ -169,17 +169,10 @@ class DockWidget: PKScreenEdgeBaseController, PKWidget {
 	
 	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint) {
 		itemViewWithMouseOver?.set(isMouseOver: false)
-		guard let scrubber = (dockContentSize - location.x) > 0 ? dockScrubber : persistentScrubber,
-			  let clipView: NSClipView = scrubber.findViews().first,
-			  let scrollView: NSScrollView = scrubber.findViews().first else {
+		guard let scrubber = (dockContentSize - location.x) > 0 ? dockScrubber : persistentScrubber else {
 			return
 		}
-		let maxWidth = scrubber.contentSize.width - scrubber.visibleRect.width
-		let newX     = clipView.bounds.origin.x - delta
-		if maxWidth > 0, (-6...maxWidth+6).contains(newX) {
-			clipView.setBoundsOrigin(NSPoint(x: newX, y: clipView.bounds.origin.y))
-			scrollView.reflectScrolledClipView(clipView)
-		}
+		scrubber.scroll(with: delta)
 	}
 	
 	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseClickAtLocation location: NSPoint) {

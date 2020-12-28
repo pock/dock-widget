@@ -73,16 +73,7 @@ class DockFolderController: PKTouchBarMouseController {
 	
 	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint) {
 		itemViewWithMouseOver?.set(isMouseOver: false)
-		guard let clipView:   NSClipView   = scrubber.findViews().first,
-			  let scrollView: NSScrollView = scrubber.findViews().first else {
-			return
-		}
-		let maxWidth = scrubber.contentSize.width - scrubber.visibleRect.width
-		let newX     = clipView.bounds.origin.x - delta
-		if maxWidth > 0, (-6...maxWidth+6).contains(newX) {
-			clipView.setBoundsOrigin(NSPoint(x: newX, y: clipView.bounds.origin.y))
-			scrollView.reflectScrolledClipView(clipView)
-		}
+		scrubber.scroll(with: delta)
 	}
 	
 	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseClickAtLocation location: NSPoint) {
