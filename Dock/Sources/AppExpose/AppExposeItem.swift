@@ -15,11 +15,26 @@ typealias AppExposeItem = CGWindowItem
 class AppExposeItemView: NSScrubberItemView {
     
     /// UI
+	public  var wid: CGWindowID!
     private var contentView:    NSView!
+	private var mouseOverView:  NSView!
     private var preview:        NSImageView!
     private var nameLabel:      ScrollingTextView!
     
-    /// Load icon view
+	/// Load mouseover view
+	private func loadMouseOverView() {
+		self.mouseOverView = NSView(frame: .zero)
+		self.mouseOverView.wantsLayer = true
+		self.mouseOverView.layer?.masksToBounds = true
+		self.mouseOverView.layer?.cornerRadius = Constants.dockItemCornerRadius
+		self.contentView.addSubview(self.mouseOverView, positioned: .below, relativeTo: self.preview)
+		self.mouseOverView.snp.makeConstraints({ m in
+			m.left.right.equalToSuperview()
+			m.top.bottom.equalToSuperview()
+		})
+	}
+	
+    /// Load preview view
     private func loadPreviewView() {
         self.preview = NSImageView(frame: .zero)
         self.preview.wantsLayer = true
@@ -88,4 +103,9 @@ class AppExposeItemView: NSScrubberItemView {
         preview.layer?.opacity = minimized ? 0.4 : 1
     }
     
+	public func set(isMouseOver: Bool) {
+		if mouseOverView == nil { loadMouseOverView() }
+		mouseOverView.layer?.backgroundColor = (isMouseOver ? NSColor.darkGray : NSColor.clear).cgColor
+	}
+	
 }

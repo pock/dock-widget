@@ -8,8 +8,9 @@
 
 import Foundation
 import PockKit
+import Defaults
 
-class AppExposeController: PKTouchBarController {
+class AppExposeController: PKTouchBarMouseController {
     
     /// UI
     @IBOutlet private weak var appName:      NSTextField!
@@ -20,6 +21,30 @@ class AppExposeController: PKTouchBarController {
     private var dockRepository: DockRepository!
     private var app: NSRunningApplication!
     private var elements: [AppExposeItem] = []
+	
+	/// Mouse stuff
+	private var itemViewWithMouseOver: AppExposeItemView?
+	private var buttonWithMouseOver:   NSButton?
+	private var touchBarView: NSView {
+		if let view = scrubber.superview(subclassOf: NSTouchBarView.self) {
+			return view
+		}
+		return scrubber
+	}
+	
+	override var visibleRectWidth: CGFloat {
+		get {
+			return touchBarView.visibleRect.width
+		}
+		set { /**/ }
+	}
+	
+	override var parentView: NSView! {
+		get {
+			return touchBarView
+		}
+		set { /**/ }
+	}
     
     override func present() {
         guard app != nil else { return }
@@ -32,17 +57,69 @@ class AppExposeController: PKTouchBarController {
     }
     
     @IBAction func willClose(_ button: NSButton?) {
+		edgeController?.tearDown(invalidate: true)
         navigationController?.popToRootController()
     }
     
+	// MARK: Mouse stuff
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseEnteredAtLocation location: NSPoint) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		super.screenEdgeController(controller, mouseEnteredAtLocation: location)
+	}
+	
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		scrubber.scroll(with: delta)
+	}
+	
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseClickAtLocation location: NSPoint) {
+		/// Check for button
+		if let button = button(at: location) {
+			willClose(button)
+			return
+		}
+		guard let itemView = itemViewWithMouseOver, let item = elements.first(where: { $0.wid == itemView.wid }) else {
+			return
+		}
+		handleItem(item)
+	}
+	
+	override func showCursor(_ cursor: NSCursor?, at location: NSPoint?) {
+		guard Defaults[.showCursor] else {
+			return
+		}
+		super.showCursor(cursor, at: location)
+	}
+	
+	override func updateCursorLocation(_ location: NSPoint?) {
+		itemViewWithMouseOver?.set(isMouseOver: false)
+		itemViewWithMouseOver = nil
+		super.updateCursorLocation(location)
+		itemViewWithMouseOver = itemView(at: location)
+		itemViewWithMouseOver?.set(isMouseOver: true)
+		updateButtonWithMouseOverHilight(location)
+	}
+	
+	private func updateButtonWithMouseOverHilight(_ location: NSPoint?) {
+		buttonWithMouseOver?.isHighlighted = false
+		buttonWithMouseOver = nil
+		buttonWithMouseOver = button(at: location)
+		buttonWithMouseOver?.isHighlighted = true
+	}
+	
 }
-
 
 extension AppExposeController {
     public func set(elements: [AppExposeItem]) {
         self.elements = elements
         self.windowsCount.stringValue = "\(elements.count) " + "windows".localized
         self.scrubber.reloadData()
+		if elements.isEmpty == false {
+			self.scrubber.scrollItem(at: 0, to: .none)
+		}
+		DispatchQueue.main.async { [weak self] in
+			self?.reloadScreenEdgeController()
+		}
     }
     public func set(app: NSRunningApplication) {
         self.app = app
@@ -61,6 +138,7 @@ extension AppExposeController: NSScrubberDataSource {
         let icon = item.minimized ? app.icon : item.preview
         let scaling: NSImageScaling = item.minimized ? .scaleProportionallyUpOrDown : .scaleAxesIndependently
         let view = scrubber.makeItem(withIdentifier: Constants.kAppExposeItemView, owner: self) as! AppExposeItemView
+		view.wid = item.wid
         view.set(preview: icon, imageScaling: scaling)
         view.set(name: item.name)
         view.set(minimized: item.minimized)
@@ -76,13 +154,40 @@ extension AppExposeController: NSScrubberFlowLayoutDelegate {
 
 extension AppExposeController: NSScrubberDelegate {
     func scrubber(_ scrubber: NSScrubber, didSelectItemAt selectedIndex: Int) {
-        let item = elements[selectedIndex]
-        PockDockHelper.sharedInstance()?.activate(item, in: app)
-        if item.minimized {
-            PockDockHelper.sharedInstance()?.activate(item, in: app)
-        }else if PockDockHelper.sharedInstance()?.windowIsFrontmost(item.wid, forApp: app) ?? false {
-            // TODO: PockDockHelper.sharedInstance()?.minimizeWindowItem(item)
-        }
-        willClose(nil)
+        handleItem(elements[selectedIndex])
     }
+	private func handleItem(_ item: AppExposeItem) {
+		PockDockHelper.sharedInstance()?.activate(item, in: app)
+		if item.minimized {
+			PockDockHelper.sharedInstance()?.activate(item, in: app)
+		}else if PockDockHelper.sharedInstance()?.windowIsFrontmost(item.wid, forApp: app) ?? false {
+			// TODO: PockDockHelper.sharedInstance()?.minimizeWindowItem(item)
+		}
+		willClose(nil)
+	}
+}
+
+extension AppExposeController {
+	private func subview<T: NSView>(in view: NSView?, at location: NSPoint?, of type: T.Type = T.self) -> T? {
+		guard let view = view, let location = location else {
+			return nil
+		}
+		let loc = NSPoint(x: location.x, y: 12)
+		let views = view.findViews(subclassOf: type)
+		return views.first(where: { $0.superview?.convert($0.frame, to: parentView).contains(loc) == true })
+	}
+	
+	private func itemView(at location: NSPoint?) -> AppExposeItemView? {
+		guard let scrubber = scrubber else {
+			return nil
+		}
+		return subview(in: scrubber, at: location, of: AppExposeItemView.self)
+	}
+	
+	private func button(at location: NSPoint?) -> NSButton? {
+		guard let view = subview(in: parentView, at: location, of: NSTouchBarItemContainerView.self) else {
+			return nil
+		}
+		return view.findViews(subclassOf: NSButton.self).first
+	}
 }
