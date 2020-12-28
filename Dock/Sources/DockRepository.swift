@@ -257,6 +257,9 @@ extension DockRepository {
 		}
 		///  Remove from current list
 		for removedItem in persistentItems.enumerated().filter({ tmpPersistentItems.contains($0.element) == false }) {
+			if removedItem.element.name == "Trash" {
+				continue
+			}
 			persistentItems.remove(at: removedItem.offset)
 			dockDelegate?.didUpdatePersistentItem(removedItem.element, at: removedItem.offset, added: false)
 		}

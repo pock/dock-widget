@@ -362,12 +362,13 @@ extension DockWidget: DockDelegate {
 			guard let self = self else {
 				return
 			}
-			if let itemIndex = self.persistentItems.firstIndex(where: { $0.bundleIdentifier == item.bundleIdentifier }), let itemView = self.itemView(for: item) {
+			if let itemIndex = self.persistentItems.firstIndex(where: { $0.path == item.path }), let itemView = self.itemView(for: item) {
 				if added {
 					itemView.set(icon: item.icon)
 					self.persistentScrubber.reloadItems(at: IndexSet(integer: itemIndex))
 				}else {
 					self.persistentScrubber.removeItems(at: IndexSet(integer: itemIndex))
+					self.persistentItems.remove(at: itemIndex)
 					if let index = self.cachedPersistentItemViews.firstIndex(where: { $0.key == item.diffId }) {
 						self.cachedPersistentItemViews.remove(at: index)
 					}

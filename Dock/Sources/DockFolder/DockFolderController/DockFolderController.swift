@@ -28,7 +28,7 @@ class DockFolderController: PKTouchBarMouseController {
 	private var itemViewWithMouseOver: DockFolderItemView?
 	private var buttonWithMouseOver:   NSButton?
 	private var touchBarView: NSView {
-		if let view = openButton.superview(subclassOf: NSTouchBarView.self) {
+		if let view = scrubber.superview(subclassOf: NSTouchBarView.self) {
 			return view
 		}
 		fatalError("Can't find NSTouchBarView object.")
