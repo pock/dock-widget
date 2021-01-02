@@ -26,7 +26,7 @@ class AppExposeItemView: NSScrubberItemView {
 		self.mouseOverView = NSView(frame: .zero)
 		self.mouseOverView.wantsLayer = true
 		self.mouseOverView.layer?.masksToBounds = true
-		self.mouseOverView.layer?.cornerRadius = Constants.dockItemCornerRadius
+		self.mouseOverView.layer?.cornerRadius = 2
 		self.contentView.addSubview(self.mouseOverView, positioned: .below, relativeTo: self.preview)
 		self.mouseOverView.snp.makeConstraints({ m in
 			m.left.right.equalToSuperview()

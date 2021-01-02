@@ -10,6 +10,9 @@ import Foundation
 import Defaults
 
 class Constants {
+	/// Known class names
+	static let NSTouchBarView: 				String = "NSTouchBarView"
+	static let NSTouchBarItemContainerView: String = "NSTouchBarItemContainerView"
     /// Known identifiers
     static let kFinderIdentifier: 	 String = "com.apple.finder"
 	static let kLaunchpadIdentifier: String = "com.apple.launchpad.launcher"
@@ -57,13 +60,36 @@ extension NSView {
 	func findViews<T: NSView>(subclassOf: T.Type = T.self) -> [T] {
 		return recursiveSubviews.compactMap { $0 as? T }
 	}
+	func findViews(subclassOf name: String) -> [NSView] {
+		return recursiveSubviews.compactMap {
+			let viewClassName = String(describing: type(of: $0))
+			return name == viewClassName ? $0 : nil
+		}
+	}
 	var recursiveSubviews: [NSView] {
 		return subviews + subviews.flatMap { $0.recursiveSubviews }
 	}
-	func superview<T: NSView>(subclassOf type: T.Type = T.self) -> T? {
+	func superview(subclassOf name: String = "NSView") -> NSView? {
 		guard let view = superview else {
 			return nil
 		}
-		return view as? T ?? view.superview(subclassOf: type)
+		let viewClassName = String(describing: type(of: view))
+		return name == viewClassName ? view : view.superview(subclassOf: name)
+	}
+	func subview<T: NSView>(in view: NSView?, at location: NSPoint?, of type: T.Type = T.self) -> T? {
+		guard let view = view, let location = location else {
+			return nil
+		}
+		let loc = NSPoint(x: location.x, y: 12)
+		let views = self.findViews(subclassOf: type)
+		return views.first(where: { $0.superview?.convert($0.frame, to: view).contains(loc) == true })
+	}
+	func subview(in view: NSView?, at location: NSPoint?, of type: String) -> NSView? {
+		guard let view = view, let location = location else {
+			return nil
+		}
+		let loc = NSPoint(x: location.x, y: 12)
+		let views = self.findViews(subclassOf: type)
+		return views.first(where: { $0.superview?.convert($0.frame, to: view).contains(loc) == true })
 	}
 }

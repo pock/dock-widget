@@ -26,7 +26,7 @@ class AppExposeController: PKTouchBarMouseController {
 	private var itemViewWithMouseOver: AppExposeItemView?
 	private var buttonWithMouseOver:   NSButton?
 	private var touchBarView: NSView {
-		if let view = scrubber.superview(subclassOf: NSTouchBarView.self) {
+		if let view = scrubber.superview(subclassOf: Constants.NSTouchBarView) {
 			return view
 		}
 		return scrubber
@@ -168,24 +168,15 @@ extension AppExposeController: NSScrubberDelegate {
 }
 
 extension AppExposeController {
-	private func subview<T: NSView>(in view: NSView?, at location: NSPoint?, of type: T.Type = T.self) -> T? {
-		guard let view = view, let location = location else {
-			return nil
-		}
-		let loc = NSPoint(x: location.x, y: 12)
-		let views = view.findViews(subclassOf: type)
-		return views.first(where: { $0.superview?.convert($0.frame, to: parentView).contains(loc) == true })
-	}
-	
 	private func itemView(at location: NSPoint?) -> AppExposeItemView? {
 		guard let scrubber = scrubber else {
 			return nil
 		}
-		return subview(in: scrubber, at: location, of: AppExposeItemView.self)
+		return scrubber.subview(in: parentView, at: location, of: AppExposeItemView.self)
 	}
 	
 	private func button(at location: NSPoint?) -> NSButton? {
-		guard let view = subview(in: parentView, at: location, of: NSTouchBarItemContainerView.self) else {
+		guard let view = parentView.subview(in: parentView, at: location, of: Constants.NSTouchBarItemContainerView) else {
 			return nil
 		}
 		return view.findViews(subclassOf: NSButton.self).first

@@ -28,7 +28,7 @@ class DockFolderController: PKTouchBarMouseController {
 	private var itemViewWithMouseOver: DockFolderItemView?
 	private var buttonWithMouseOver:   NSButton?
 	private var touchBarView: NSView {
-		if let view = scrubber.superview(subclassOf: NSTouchBarView.self) {
+		if let view = scrubber.superview(subclassOf: Constants.NSTouchBarView) {
 			return view
 		}
 		fatalError("Can't find NSTouchBarView object.")
@@ -213,24 +213,15 @@ extension DockFolderController: NSScrubberDelegate {
 }
 
 extension DockFolderController {
-	private func subview<T: NSView>(in view: NSView?, at location: NSPoint?, of type: T.Type = T.self) -> T? {
-		guard let view = view, let location = location else {
-			return nil
-		}
-		let loc = NSPoint(x: location.x, y: 12)
-		let views = view.findViews(subclassOf: type)
-		return views.first(where: { $0.superview?.convert($0.frame, to: parentView).contains(loc) == true })
-	}
-	
 	private func itemView(at location: NSPoint?) -> DockFolderItemView? {
 		guard let scrubber = scrubber else {
 			return nil
 		}
-		return subview(in: scrubber, at: location, of: DockFolderItemView.self)
+		return scrubber.subview(in: parentView, at: location, of: DockFolderItemView.self)
 	}
 	
 	private func button(at location: NSPoint?) -> NSButton? {
-		guard let view = subview(in: parentView, at: location, of: NSTouchBarItemContainerView.self) else {
+		guard let view = parentView.subview(in: parentView, at: location, of: Constants.NSTouchBarItemContainerView) else {
 			return nil
 		}
 		return view.findViews(subclassOf: NSButton.self).first
