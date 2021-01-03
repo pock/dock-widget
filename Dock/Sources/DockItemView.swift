@@ -16,6 +16,7 @@ class DockItemView: NSScrubberItemView {
     private static let kBounceAnimationKey: String = "kBounceAnimationKey"
     private var isAnimating: Bool = false
 	private var isMouseOver: Bool = false
+	public  var diffId: Int!
     
     /// UI
     public private(set) var contentView:   NSView!

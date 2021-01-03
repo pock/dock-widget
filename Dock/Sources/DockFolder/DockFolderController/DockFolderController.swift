@@ -84,17 +84,17 @@ class DockFolderController: PKTouchBarMouseController {
     }
 	
 	// MARK: Mouse stuff
-	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseEnteredAtLocation location: NSPoint) {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseEnteredAtLocation location: NSPoint, in view: NSView) {
 		itemViewWithMouseOver?.set(isMouseOver: false)
-		super.screenEdgeController(controller, mouseEnteredAtLocation: location)
+		super.screenEdgeController(controller, mouseEnteredAtLocation: location, in: view)
 	}
 	
-	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint) {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseScrollWithDelta delta: CGFloat, atLocation location: NSPoint, in view: NSView) {
 		itemViewWithMouseOver?.set(isMouseOver: false)
 		scrubber.scroll(with: delta)
 	}
 	
-	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseClickAtLocation location: NSPoint) {
+	override func screenEdgeController(_ controller: PKScreenEdgeController, mouseClickAtLocation location: NSPoint, in view: NSView) {
 		/// Check for button
 		if let button = button(at: location) {
 			switch button {
