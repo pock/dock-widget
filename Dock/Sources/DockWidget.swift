@@ -414,7 +414,7 @@ extension DockWidget {
 		}
 		if let location = location {
 			let loc = NSPoint(x: location.x + 6, y: 12)
-			if itemView.convert(itemView.iconView.bounds, to: view).contains(loc) {
+			if itemView.convert(itemView.iconView.frame, to: view).contains(loc) {
 				return itemView
 			}
 		}
