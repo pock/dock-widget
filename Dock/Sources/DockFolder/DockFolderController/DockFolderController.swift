@@ -115,13 +115,6 @@ class DockFolderController: PKTouchBarMouseController {
 		open(item: item)
 	}
 	
-	override func showCursor(_ cursor: NSCursor?, at location: NSPoint?) {
-		guard Defaults[.showCursor] else {
-			return
-		}
-		super.showCursor(cursor, at: location)
-	}
-	
 	override func updateCursorLocation(_ location: NSPoint?) {
 		itemViewWithMouseOver?.set(isMouseOver: false)
 		itemViewWithMouseOver = nil

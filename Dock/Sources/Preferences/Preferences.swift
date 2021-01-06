@@ -80,6 +80,4 @@ extension Defaults.Keys {
     static let hideTrash                        = Defaults.Key<Bool>("hideTrash",              default: false)
     static let hidePersistentItems              = Defaults.Key<Bool>("hidePersistentItems",    default: false)
     static let openFinderInsidePock             = Defaults.Key<Bool>("openFinderInsidePock",   default: true)
-	static let hasMouseSupport					= Defaults.Key<Bool>("hasMouseSupport",		   default: true)
-	static let showCursor					 	= Defaults.Key<Bool>("showCursor",		   	   default: true)
 }
