@@ -43,7 +43,6 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		self.displayScrubbers()
 		self.view = stackView
 		self.dockRepository = DockRepository(delegate: self)
-		// TODO: self.dockRepository.reload(nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(displayScrubbers), 	    name: .shouldReloadPersistentItems, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadScrubbersLayout), name: .shouldReloadScrubbersLayout, object: nil)
 	}
@@ -246,6 +245,7 @@ extension DockWidget: DockDelegate {
 			}else {
 				if self.dockItems.contains(item) == false {
 					if index < self.dockItems.count {
+						self.dockItems.remove(at: index)
 						self.dockItems.insert(item, at: index)
 						self.dockScrubber.reloadItems(at: IndexSet(integer: index))
 					}else {

@@ -131,7 +131,7 @@ extension DockRepository {
 	
 	private func registerForInternalNotifications() {
 		NSWorkspace.shared.notificationCenter.addObserver(self,
-														  selector: #selector(reloadDockItems(_:)),
+														  selector: #selector(deepReload(_:)),
 														  name: .shouldReloadDock,
 														  object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self,
@@ -150,6 +150,10 @@ extension DockRepository {
 extension DockRepository {
 	
 	/// Reload
+	@objc private func deepReload(_ notification: NSNotification?) {
+		NSWorkspace.shared.notificationCenter.post(name: NSNotification.Name("shouldReloadPock"), object: nil)
+	}
+	
 	@objc private func reloadDockItems(_ notification: NSNotification?) {
 		loadRunningItems()
 		loadDefaultItems()
@@ -178,10 +182,22 @@ extension DockRepository {
 		/// Empty array
 		defaultItems.removeAll(where: { item in self.runningItems.contains(where: { $0.bundleIdentifier == item.bundleIdentifier }) == false })
 		/// Add Finder item, if needed
-		if Defaults[.hideFinder] == false, defaultItems.contains(where: { $0.bundleIdentifier == Constants.kFinderIdentifier }) == false {
+		if Defaults[.hideFinder] {
+			if let item = defaultItems.first(where: { $0.bundleIdentifier == Constants.kFinderIdentifier }) {
+				dockDelegate?.didUpdateDockItem(item, at: item.index, terminated: true, isDefaults: false)
+				defaultItems.removeAll(where: { $0.diffId == item.diffId })
+			}
+		}else if defaultItems.contains(where: { $0.bundleIdentifier == Constants.kFinderIdentifier }) == false {
 			let item = DockItem(0, Constants.kFinderIdentifier, name: "Finder", path: nil, icon: DockRepository.getIcon(forBundleIdentifier: Constants.kFinderIdentifier))
 			defaultItems.insert(item, at: 0)
 			dockDelegate?.didUpdateDockItem(item, at: 0, terminated: false, isDefaults: true)
+		}
+		/// Only running apps
+		guard Defaults[.showOnlyRunningApps] == false else {
+			for (index, item) in runningItems.enumerated() {
+				dockDelegate?.didUpdateDockItem(item, at: index, terminated: false, isDefaults: false)
+			}
+			return
 		}
 		/// Iterate on apps
 		for (index,app) in apps.enumerated() {
@@ -264,7 +280,12 @@ extension DockRepository {
 			dockDelegate?.didUpdatePersistentItem(removedItem.element, at: removedItem.offset, added: false)
 		}
 		/// Handle Trash
-		if !Defaults[.hideTrash] && !persistentItems.contains(where: { $0.path?.absoluteString == Constants.trashPath }) {
+		if Defaults[.hideTrash] {
+			if let item = persistentItems.first(where: { $0.path?.absoluteString == Constants.trashPath }) {
+				dockDelegate?.didUpdatePersistentItem(item, at: item.index, added: false)
+				persistentItems.removeAll(where: { $0.diffId == item.diffId })
+			}
+		}else if persistentItems.contains(where: { $0.path?.absoluteString == Constants.trashPath }) == false {
 			let trashType = ((try? FileManager.default.contentsOfDirectory(atPath: Constants.trashPath).isEmpty) ?? true) ? "TrashIcon" : "FullTrashIcon"
 			let item = DockItem(
 				self.persistentItems.count,
