@@ -87,7 +87,6 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
 	
 	@IBAction private func didChangeHideRunningIndicatorValue(button: NSButton) {
 		Defaults[.hideRunningIndicator] = button.state == .on
-		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, 	  	   object: nil)
 		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScrubbersLayout, object: nil)
 	}
     

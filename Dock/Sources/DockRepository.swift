@@ -131,14 +131,6 @@ extension DockRepository {
 	
 	private func registerForInternalNotifications() {
 		NSWorkspace.shared.notificationCenter.addObserver(self,
-														  selector: #selector(deepReload(_:)),
-														  name: .shouldReloadDock,
-														  object: nil)
-		NSWorkspace.shared.notificationCenter.addObserver(self,
-														  selector: #selector(loadPersistentItems),
-														  name: .shouldReloadPersistentItems,
-														  object: nil)
-		NSWorkspace.shared.notificationCenter.addObserver(self,
 														  selector: #selector(self.setupNotificationBadgeRefreshTimer),
 														  name: .didChangeNotificationBadgeRefreshRate,
 														  object: nil)
@@ -150,10 +142,6 @@ extension DockRepository {
 extension DockRepository {
 	
 	/// Reload
-	@objc private func deepReload(_ notification: NSNotification?) {
-		NSWorkspace.shared.notificationCenter.post(name: NSNotification.Name("shouldReloadPock"), object: nil)
-	}
-	
 	@objc private func reloadDockItems(_ notification: NSNotification?) {
 		loadRunningItems()
 		loadDefaultItems()

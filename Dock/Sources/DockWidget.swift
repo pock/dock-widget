@@ -43,8 +43,12 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		self.displayScrubbers()
 		self.view = stackView
 		self.dockRepository = DockRepository(delegate: self)
-		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(displayScrubbers), 	    name: .shouldReloadPersistentItems, object: nil)
-		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadScrubbersLayout), name: .shouldReloadScrubbersLayout, object: nil)
+		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(displayScrubbers),
+														  name: .shouldReloadPersistentItems, object: nil)
+		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(reloadScrubbersLayout),
+														  name: .shouldReloadScrubbersLayout, object: nil)
+		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(deepReload(_:)),
+														  name: .shouldReloadDock, object: nil)
 	}
 	
 	deinit {
@@ -55,6 +59,17 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		dockRepository      = nil
 		itemViewWithMouseOver = nil
 		NSWorkspace.shared.notificationCenter.removeObserver(self)
+	}
+	
+	@objc private func deepReload(_ notification: NSNotification?) {
+		self.dockItems.removeAll()
+		self.persistentItems.removeAll()
+		self.cachedDockItemViews.removeAll()
+		self.cachedPersistentItemViews.removeAll()
+		self.dockScrubber.reloadData()
+		self.persistentScrubber.reloadData()
+		self.dockRepository = DockRepository(delegate: self)
+		print("[DockWidget]: DEEP RELOAD")
 	}
 	
 	/// Configure stack view
@@ -70,14 +85,18 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	}
 	
 	@objc private func reloadScrubbersLayout() {
+		cachedDockItemViews.removeAll()
 		let dockLayout              = NSScrubberFlowLayout()
 		dockLayout.itemSize         = Constants.dockItemSize
 		dockLayout.itemSpacing      = CGFloat(Defaults[.itemSpacing])
 		dockScrubber.scrubberLayout = dockLayout
+		dockScrubber.reloadData()
+		cachedPersistentItemViews.removeAll()
 		let persistentLayout              = NSScrubberFlowLayout()
 		persistentLayout.itemSize         = Constants.dockItemSize
 		persistentLayout.itemSpacing      = CGFloat(Defaults[.itemSpacing])
 		persistentScrubber.scrubberLayout = persistentLayout
+		persistentScrubber.reloadData()
 	}
 	
 	/// Configure dock scrubber
