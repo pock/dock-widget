@@ -10,8 +10,8 @@
 		340C03B2259A54F600DD9173 /* DockHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340C03B1259A54F600DD9173 /* DockHelper.swift */; };
 		340C03B7259A556500DD9173 /* DockTiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340C03B6259A556500DD9173 /* DockTiles.swift */; };
 		3474195725645C1600C2DD20 /* SystemSoundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3474195625645C1600C2DD20 /* SystemSoundHelper.swift */; };
+		34B6D10925A7542C001C925C /* Pods_Dock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */; };
 		34C64DAD25699186006CB7F4 /* DockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C64DAC25699186006CB7F4 /* DockRepository.swift */; };
-		34C64DF4256ACA37006CB7F4 /* Pods_Dock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */; };
 		34D4A1BF246DE4FA005FA975 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34D4A1B7246DE4FA005FA975 /* Localizable.strings */; };
 		34DF322F246DCCE8009B46B9 /* DockItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3210246DCCE7009B46B9 /* DockItemView.swift */; };
 		34DF3230246DCCE8009B46B9 /* DockWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF3211246DCCE7009B46B9 /* DockWidget.swift */; };
@@ -96,7 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34C64DF4256ACA37006CB7F4 /* Pods_Dock.framework in Frameworks */,
+				34B6D10925A7542C001C925C /* Pods_Dock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,7 +395,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Copy widget to destination folder.\necho \"Copying ${PRODUCT_NAME}.pock to destination folder\"\n# cp -r $TARGET_BUILD_DIR/$PRODUCT_NAME.pock ~/Library/Application\\ Support/Pock/Widgets/\n";
+			shellScript = "# Copy widget to destination folder.\nif [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n  echo \"Copying ${PRODUCT_NAME}.pock to destination folder\"\n  cp -r $TARGET_BUILD_DIR/$PRODUCT_NAME.pock ~/Library/Application\\ Support/Pock/Widgets/\nfi\n";
 		};
 		34C64E05256ACC2D006CB7F4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -656,7 +656,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 788D9WZ9Z3;
 				INFOPLIST_FILE = Dock/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application\\ Support/Pock/Widgets";
@@ -684,7 +684,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = 788D9WZ9Z3;
 				INFOPLIST_FILE = Dock/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application\\ Support/Pock/Widgets";
