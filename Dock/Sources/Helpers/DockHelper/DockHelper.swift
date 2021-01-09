@@ -86,6 +86,72 @@ public class DockHelper {
 	
 }
 
+// MARK: Dock presentation mode
+
+internal enum DockMode {
+	case hidden, visible
+	var string: String {
+		switch self {
+		case .hidden:
+			return "Hidden"
+		case .visible:
+			return "Visible"
+		}
+	}
+	var autohide: Bool {
+		switch self {
+		case .hidden:
+			return true
+		case .visible:
+			return false
+		}
+	}
+	var autohide_delay: CFNumber? {
+		switch self {
+		case .hidden:
+			return 999999 as CFNumber
+		case .visible:
+			return nil
+		}
+	}
+}
+
+fileprivate let kAutoHideDelay 	= "autohide-delay" as CFString
+fileprivate let kAutoHide 		= "autohide" 	   as CFString
+fileprivate let kDockIdentifier = "com.apple.dock" as CFString
+
+internal extension DockHelper {
+	
+	static var currentMode: DockMode {
+		return CoreDockGetAutoHideEnabled() ? .hidden : .visible
+	}
+	
+	@discardableResult
+	static func setDockMode(_ mode: DockMode) -> Bool {
+		let currentMode = self.currentMode.string
+		guard currentMode != mode.string else {
+			return false
+		}
+		CoreDockSetAutoHideEnabled(mode.autohide)
+		CFPreferencesSetAppValue(kAutoHideDelay, mode.autohide_delay, kDockIdentifier)
+		let result = CFPreferencesAppSynchronize(kDockIdentifier)
+		if mode.autohide_delay != nil {
+			reloadSystemDock()
+		}
+		return result
+	}
+	
+	private static func reloadSystemDock() {
+		let task = Process()
+		task.launchPath = "/usr/bin/pkill"
+		task.arguments = ["Dock"]
+		let pipe = Pipe()
+		task.standardOutput = pipe
+		task.launch()
+	}
+	
+}
+
 // MARK: AXSwift helpers
 fileprivate extension UIElement {
 	

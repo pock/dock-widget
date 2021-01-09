@@ -15,6 +15,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     /// UI
     @IBOutlet weak var notificationBadgeRefreshRatePicker: NSPopUpButton!
     @IBOutlet weak var appExposeSettingsPicker:            NSPopUpButton!
+	@IBOutlet weak var disableOnscreenDock:				   NSButton!
     @IBOutlet weak var hideFinderCheckbox:                 NSButton!
     @IBOutlet weak var showOnlyRunningApps:                NSButton!
 	@IBOutlet weak var hideRunningIndicator:			   NSButton!
@@ -55,6 +56,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     }
     
     private func setupCheckboxes() {
+		self.disableOnscreenDock.state			= Defaults[.disableOnscreenDock]  ? .on : .off
         self.hideFinderCheckbox.state           = Defaults[.hideFinder]           ? .on : .off
         self.showOnlyRunningApps.state          = Defaults[.showOnlyRunningApps]  ? .on : .off
 		self.hideRunningIndicator.state			= Defaults[.hideRunningIndicator] ? .on : .off
@@ -75,6 +77,12 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
         Defaults[.appExposeSettings] = AppExposeSettings.allCases[self.appExposeSettingsPicker.indexOfSelectedItem]
     }
     
+	@IBAction private func didChangeDisableOnscreenDockValue(button: NSButton) {
+		let shouldDisable = button.state == .on
+		Defaults[.disableOnscreenDock] = shouldDisable
+		DockHelper.setDockMode(shouldDisable ? .hidden : .visible)
+	}
+	
     @IBAction private func didChangeHideFinderValue(button: NSButton) {
         Defaults[.hideFinder] = button.state == .on
         NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, object: nil)

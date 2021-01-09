@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+extern Boolean CoreDockGetAutoHideEnabled(void);
+extern void CoreDockSetAutoHideEnabled(Boolean flag);
+
 extern AXError _AXUIElementGetWindow(AXUIElementRef window, CGWindowID *windowID);
 
 @interface CGWindowItem : NSObject

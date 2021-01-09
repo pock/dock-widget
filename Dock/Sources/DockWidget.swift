@@ -49,6 +49,8 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 														  name: .shouldReloadScrubbersLayout, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(deepReload(_:)),
 														  name: .shouldReloadDock, object: nil)
+		/// Disable onscreen Dock if needed
+		DockHelper.setDockMode(Defaults[.disableOnscreenDock] ? .hidden : .visible)
 	}
 	
 	deinit {
