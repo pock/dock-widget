@@ -89,13 +89,15 @@ public class DockHelper {
 // MARK: Dock presentation mode
 
 internal enum DockMode {
-	case hidden, visible
+	case hidden, visible, disabled
 	var string: String {
 		switch self {
 		case .hidden:
 			return "Hidden"
 		case .visible:
 			return "Visible"
+		case .disabled:
+			return "Disabled"
 		}
 	}
 	var autohide: Bool {
@@ -104,14 +106,16 @@ internal enum DockMode {
 			return true
 		case .visible:
 			return false
+		case .disabled:
+			return true
 		}
 	}
-	var autohide_delay: CFNumber? {
+	var autohide_delay: CGFloat? {
 		switch self {
-		case .hidden:
-			return 999999 as CFNumber
-		case .visible:
+		case .hidden, .visible:
 			return nil
+		case .disabled:
+			return 999999
 		}
 	}
 }
@@ -123,19 +127,22 @@ fileprivate let kDockIdentifier = "com.apple.dock" as CFString
 internal extension DockHelper {
 	
 	static var currentMode: DockMode {
+		if CFPreferencesCopyAppValue(kAutoHideDelay, kDockIdentifier) as? CGFloat ?? 0 >= 999999 {
+			return .disabled
+		}
 		return CoreDockGetAutoHideEnabled() ? .hidden : .visible
 	}
 	
 	@discardableResult
-	static func setDockMode(_ mode: DockMode) -> Bool {
-		let currentMode = self.currentMode.string
-		guard currentMode != mode.string else {
+	static func setDockMode(_ newMode: DockMode) -> Bool {
+		let previousMode = self.currentMode
+		guard previousMode != newMode else {
 			return false
 		}
-		CoreDockSetAutoHideEnabled(mode.autohide)
-		CFPreferencesSetAppValue(kAutoHideDelay, mode.autohide_delay, kDockIdentifier)
+		CoreDockSetAutoHideEnabled(newMode.autohide)
+		CFPreferencesSetAppValue(kAutoHideDelay, newMode.autohide_delay as CFNumber?, kDockIdentifier)
 		let result = CFPreferencesAppSynchronize(kDockIdentifier)
-		if mode.autohide_delay != nil {
+		if previousMode == .disabled || newMode.autohide_delay != nil {
 			reloadSystemDock()
 		}
 		return result

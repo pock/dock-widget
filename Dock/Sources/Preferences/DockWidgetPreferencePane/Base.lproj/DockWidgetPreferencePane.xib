@@ -9,10 +9,11 @@
         <customObject id="-2" userLabel="File's Owner" customClass="DockWidgetPreferencePane" customModule="Dock" customModuleProvider="target">
             <connections>
                 <outlet property="appExposeSettingsPicker" destination="Zlx-Ef-hb0" id="sNk-bP-mdO"/>
-                <outlet property="disableOnscreenDock" destination="xpd-RS-DM4" id="mSD-Be-Vzi"/>
+                <outlet property="disableSystemDock" destination="WsK-ud-QnX" id="3Zf-Kd-tMA"/>
                 <outlet property="hideFinderCheckbox" destination="caE-kj-Dca" id="oxs-PD-8sv"/>
                 <outlet property="hidePersistentItemsCheckbox" destination="UBz-m6-oWX" id="hWf-bv-jPv"/>
                 <outlet property="hideRunningIndicator" destination="yzm-AR-cas" id="ma0-4N-Rmc"/>
+                <outlet property="hideSystemDock" destination="xpd-RS-DM4" id="1d0-01-30g"/>
                 <outlet property="hideTrashCheckbox" destination="NIc-hs-c8t" id="FIq-Ge-h8t"/>
                 <outlet property="itemSpacingTextField" destination="VVh-2X-SdG" id="r3n-BR-IQb"/>
                 <outlet property="notificationBadgeRefreshRatePicker" destination="QqZ-9r-WHQ" id="fEd-NZ-E49"/>
@@ -24,14 +25,14 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="340" height="369"/>
+            <rect key="frame" x="0.0" y="0.0" width="340" height="405"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <stackView distribution="fillEqually" orientation="vertical" alignment="leading" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VyA-ug-Nvm">
-                    <rect key="frame" x="20" y="16" width="300" height="337"/>
+                    <rect key="frame" x="20" y="16" width="300" height="373"/>
                     <subviews>
                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gFt-UC-6tr">
-                            <rect key="frame" x="0.0" y="317" width="300" height="20"/>
+                            <rect key="frame" x="0.0" y="353" width="300" height="20"/>
                             <subviews>
                                 <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="752" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9xL-NG-zId">
                                     <rect key="frame" x="-2" y="4" width="225" height="16"/>
@@ -69,7 +70,7 @@
                             </customSpacing>
                         </stackView>
                         <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xCL-Ye-myT">
-                            <rect key="frame" x="0.0" y="281" width="300" height="20"/>
+                            <rect key="frame" x="0.0" y="317" width="300" height="20"/>
                             <subviews>
                                 <textField horizontalHuggingPriority="249" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jrg-4f-dhp">
                                     <rect key="frame" x="-2" y="4" width="225" height="16"/>
@@ -107,19 +108,29 @@
                             </customSpacing>
                         </stackView>
                         <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="P9E-R2-fFj">
-                            <rect key="frame" x="0.0" y="262" width="300" height="5"/>
+                            <rect key="frame" x="0.0" y="298" width="300" height="5"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="1" id="ISK-gi-A7b"/>
                             </constraints>
                         </box>
                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xpd-RS-DM4">
-                            <rect key="frame" x="-2" y="231" width="183" height="18"/>
-                            <buttonCell key="cell" type="check" title="Disablee On-Screen Dock" bezelStyle="regularSquare" imagePosition="left" inset="2" id="2DC-yZ-fm5">
+                            <rect key="frame" x="-2" y="267" width="138" height="18"/>
+                            <buttonCell key="cell" type="check" title="Hide System Dock" bezelStyle="regularSquare" imagePosition="left" inset="2" id="2DC-yZ-fm5">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
-                                <action selector="didChangeDisableOnscreenDockValueWithButton:" target="-2" id="xt9-LL-Q5f"/>
+                                <action selector="didChangeHideSystemDockValueWithButton:" target="-2" id="aoV-tb-JVT"/>
+                            </connections>
+                        </button>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WsK-ud-QnX">
+                            <rect key="frame" x="-7" y="225" width="162" height="32"/>
+                            <buttonCell key="cell" type="push" title="Disable System Dock" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ukb-Rl-3Y5">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="enableOrDisableSystemDock:" target="-2" id="UHQ-bw-OpT"/>
                             </connections>
                         </button>
                         <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="ww9-RK-PeY">
@@ -258,8 +269,10 @@
                         <integer value="1000"/>
                         <integer value="1000"/>
                         <integer value="1000"/>
+                        <integer value="1000"/>
                     </visibilityPriorities>
                     <customSpacing>
+                        <real value="3.4028234663852886e+38"/>
                         <real value="3.4028234663852886e+38"/>
                         <real value="3.4028234663852886e+38"/>
                         <real value="3.4028234663852886e+38"/>

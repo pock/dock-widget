@@ -37,6 +37,11 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	override required init() {
 		super.init()
 		self.configureStackView()
+		self.view = stackView
+	}
+	
+	func initialize() {
+		self.configureStackView()
 		self.configureDockScrubber()
 		self.configureSeparator()
 		self.configurePersistentScrubber()
@@ -49,11 +54,11 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 														  name: .shouldReloadScrubbersLayout, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(deepReload(_:)),
 														  name: .shouldReloadDock, object: nil)
-		/// Disable onscreen Dock if needed
-		DockHelper.setDockMode(Defaults[.disableOnscreenDock] ? .hidden : .visible)
+		/// Hide System Dock if needed
+		DockHelper.setDockMode(Defaults[.hideSystemDock] ? .hidden : .visible)
 	}
 	
-	deinit {
+	func takedown() {
 		stackView           = nil
 		dockScrubber        = nil
 		separator           = nil
@@ -61,6 +66,14 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		dockRepository      = nil
 		itemViewWithMouseOver = nil
 		NSWorkspace.shared.notificationCenter.removeObserver(self)
+	}
+	
+	func viewDidAppear() {
+		initialize()
+	}
+	
+	func viewDidDisappear() {
+		takedown()
 	}
 	
 	@objc private func deepReload(_ notification: NSNotification?) {

@@ -15,8 +15,11 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     /// UI
     @IBOutlet weak var notificationBadgeRefreshRatePicker: NSPopUpButton!
     @IBOutlet weak var appExposeSettingsPicker:            NSPopUpButton!
-	@IBOutlet weak var disableOnscreenDock:				   NSButton!
-    @IBOutlet weak var hideFinderCheckbox:                 NSButton!
+	
+	@IBOutlet weak var hideSystemDock: 	  NSButton!
+	@IBOutlet weak var disableSystemDock: NSButton!
+    
+	@IBOutlet weak var hideFinderCheckbox:                 NSButton!
     @IBOutlet weak var showOnlyRunningApps:                NSButton!
 	@IBOutlet weak var hideRunningIndicator:			   NSButton!
     @IBOutlet weak var hideTrashCheckbox:                  NSButton!
@@ -56,7 +59,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     }
     
     private func setupCheckboxes() {
-		self.disableOnscreenDock.state			= Defaults[.disableOnscreenDock]  ? .on : .off
+		self.hideSystemDock.state				= Defaults[.hideSystemDock]		  ? .on : .off
         self.hideFinderCheckbox.state           = Defaults[.hideFinder]           ? .on : .off
         self.showOnlyRunningApps.state          = Defaults[.showOnlyRunningApps]  ? .on : .off
 		self.hideRunningIndicator.state			= Defaults[.hideRunningIndicator] ? .on : .off
@@ -64,7 +67,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
         self.hidePersistentItemsCheckbox.state  = Defaults[.hidePersistentItems]  ? .on : .off
         self.openFinderInsidePockCheckbox.state = Defaults[.openFinderInsidePock] ? .on : .off
         self.hideTrashCheckbox.isEnabled        = !Defaults[.hidePersistentItems]
-		
+		self.disableSystemDock.title = "\(DockHelper.currentMode == .disabled ? "Enable" : "Disable") System Dock".localized
 		self.itemSpacingTextField.stringValue = "\(Defaults[.itemSpacing])pt"
     }
 
@@ -77,10 +80,10 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
         Defaults[.appExposeSettings] = AppExposeSettings.allCases[self.appExposeSettingsPicker.indexOfSelectedItem]
     }
     
-	@IBAction private func didChangeDisableOnscreenDockValue(button: NSButton) {
-		let shouldDisable = button.state == .on
-		Defaults[.disableOnscreenDock] = shouldDisable
-		DockHelper.setDockMode(shouldDisable ? .hidden : .visible)
+	@IBAction private func didChangeHideSystemDockValue(button: NSButton) {
+		let shouldHide = button.state == .on
+		Defaults[.hideSystemDock] = shouldHide
+		DockHelper.setDockMode(shouldHide ? .hidden : .visible)
 	}
 	
     @IBAction private func didChangeHideFinderValue(button: NSButton) {
@@ -112,6 +115,20 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     @IBAction private func didChangeOpenFinderInsidePockValue(button: NSButton) {
         Defaults[.openFinderInsidePock] = button.state == .on
     }
+	
+	@IBAction private func enableOrDisableSystemDock(_ sender: Any?) {
+		let previousMode = DockHelper.currentMode
+		let newMode: DockMode = {
+			guard previousMode == .disabled else {
+				return .disabled
+			}
+			return Defaults[.hideSystemDock] ? .hidden : .visible
+		}()
+		DockHelper.setDockMode(newMode)
+		hideSystemDock.state 	 = newMode == .visible ? .off : .on
+		hideSystemDock.isEnabled = newMode != .disabled
+		disableSystemDock.title = "\(newMode == .disabled ? "Enable" : "Disable") System Dock".localized
+	}
 
 }
 
