@@ -55,7 +55,14 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(deepReload(_:)),
 														  name: .shouldReloadDock, object: nil)
 		/// Hide System Dock if needed
-		DockHelper.setDockMode(Defaults[.hideSystemDock] ? .hidden : .visible)
+		if let hideSystemDock = Defaults[.hideSystemDock] {
+			DockHelper.setDockMode(hideSystemDock ? .hidden : .visible)
+		}else {
+			if DockHelper.currentMode == .disabled {
+				Defaults[.hideSystemDock] = true
+				DockHelper.setDockMode(.hidden)
+			}
+		}
 	}
 	
 	func takedown() {

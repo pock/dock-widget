@@ -59,13 +59,13 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     }
     
     private func setupCheckboxes() {
-		self.hideSystemDock.state				= Defaults[.hideSystemDock]		  ? .on : .off
-        self.hideFinderCheckbox.state           = Defaults[.hideFinder]           ? .on : .off
-        self.showOnlyRunningApps.state          = Defaults[.showOnlyRunningApps]  ? .on : .off
-		self.hideRunningIndicator.state			= Defaults[.hideRunningIndicator] ? .on : .off
-        self.hideTrashCheckbox.state            = Defaults[.hideTrash]            ? .on : .off
-        self.hidePersistentItemsCheckbox.state  = Defaults[.hidePersistentItems]  ? .on : .off
-        self.openFinderInsidePockCheckbox.state = Defaults[.openFinderInsidePock] ? .on : .off
+		self.hideSystemDock.state				= Defaults[.hideSystemDock]	== true	? .on : .off
+        self.hideFinderCheckbox.state           = Defaults[.hideFinder]           	? .on : .off
+        self.showOnlyRunningApps.state          = Defaults[.showOnlyRunningApps]  	? .on : .off
+		self.hideRunningIndicator.state			= Defaults[.hideRunningIndicator] 	? .on : .off
+        self.hideTrashCheckbox.state            = Defaults[.hideTrash]            	? .on : .off
+        self.hidePersistentItemsCheckbox.state  = Defaults[.hidePersistentItems]  	? .on : .off
+        self.openFinderInsidePockCheckbox.state = Defaults[.openFinderInsidePock] 	? .on : .off
         self.hideTrashCheckbox.isEnabled        = !Defaults[.hidePersistentItems]
 		self.disableSystemDock.title = "\(DockHelper.currentMode == .disabled ? "Enable" : "Disable") System Dock".localized
 		self.itemSpacingTextField.stringValue = "\(Defaults[.itemSpacing])pt"
@@ -122,7 +122,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
 			guard previousMode == .disabled else {
 				return .disabled
 			}
-			return Defaults[.hideSystemDock] ? .hidden : .visible
+			return Defaults[.hideSystemDock] == true ? .hidden : .visible
 		}()
 		DockHelper.setDockMode(newMode)
 		hideSystemDock.state 	 = newMode == .visible ? .off : .on

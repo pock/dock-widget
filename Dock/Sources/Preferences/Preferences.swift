@@ -74,7 +74,7 @@ extension Defaults.Keys {
     static let notificationBadgeRefreshInterval = Defaults.Key<NotificationBadgeRefreshRateKeys>("notificationBadgeRefreshInterval", default: .tenSeconds)
     static let appExposeSettings                = Defaults.Key<AppExposeSettings>("appExposeSettings", default: .ifNeeded)
     static let itemSpacing                      = Defaults.Key<Int>("itemSpacing",             default: 8)
-	static let hideSystemDock				 	= Defaults.Key<Bool>("hideSystemDock",	   	   default: false)
+	static let hideSystemDock				 	= Defaults.Key<Bool?>("hideSystemDock",	   	   default: nil)
     static let hideFinder                       = Defaults.Key<Bool>("hideFinder",             default: false)
     static let showOnlyRunningApps              = Defaults.Key<Bool>("showOnlyRunningApps",    default: false)
 	static let hideRunningIndicator				= Defaults.Key<Bool>("hideRunningIndicator",   default: false)
