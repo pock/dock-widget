@@ -51,7 +51,7 @@ class DockRepository {
 	
 	/// Deinit
 	deinit {
-		self.notificationBadgeRefreshTimer.invalidate()
+		self.notificationBadgeRefreshTimer?.invalidate()
 		self.unregisterFromEventsAndNotifications()
 		dockFolderRepository = nil
 		defaultItems.removeAll()
@@ -376,21 +376,13 @@ extension DockRepository {
 extension DockRepository {
 	/// Load notification badges
 	private func updateNotificationBadges() {
-		guard shouldShowNotificationBadge else {
+		guard shouldShowNotificationBadge, let delegate = self.dockDelegate else {
 			return
 		}
-		DockHelper.default.reloadAllDockItems { [weak self] tiles in
-			guard let self = self, let delegate = self.dockDelegate else {
-				return
-			}
-			for tile in tiles {
-				guard let tile = tile as? DockApplicationTile, let item = self.dockItems.first(where: { $0.bundleIdentifier == tile.bundleIdentifier }) else {
-					continue
-				}
-				item.badge = tile.badge
-			}
-			delegate.didUpdateBadge(for: self.dockItems)
+		for item in dockItems {
+			item.badge = PockDockHelper.sharedInstance()?.getBadgeCountForItem(withName: item.name)
 		}
+		delegate.didUpdateBadge(for: self.dockItems)
 	}
 }
 

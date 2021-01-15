@@ -65,22 +65,14 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		}
 	}
 	
-	func takedown() {
-		stackView           = nil
-		dockScrubber        = nil
-		separator           = nil
-		persistentScrubber  = nil
-		dockRepository      = nil
-		itemViewWithMouseOver = nil
-		NSWorkspace.shared.notificationCenter.removeObserver(self)
-	}
-	
 	func viewDidAppear() {
 		initialize()
 	}
 	
 	func viewDidDisappear() {
-		takedown()
+		deepReload(nil)
+		itemViewWithMouseOver = nil
+		NSWorkspace.shared.notificationCenter.removeObserver(self)
 	}
 	
 	@objc private func deepReload(_ notification: NSNotification?) {
@@ -90,6 +82,9 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		self.cachedPersistentItemViews.removeAll()
 		self.dockScrubber.reloadData()
 		self.persistentScrubber.reloadData()
+		if notification == nil {
+			return
+		}
 		self.dockRepository = DockRepository(delegate: self)
 		print("[DockWidget]: DEEP RELOAD")
 	}
@@ -160,7 +155,7 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		persistentScrubber.itemAlignment = .none
 		persistentScrubber.scrubberLayout = layout
 		persistentScrubber.snp.makeConstraints({ m in
-			m.width.equalTo((Constants.dockItemSize.width + 8) * CGFloat(persistentItems.count))
+			m.width.lessThanOrEqualTo((Constants.dockItemSize.width + 8) * CGFloat(persistentItems.count))
 		})
 		stackView.addArrangedSubview(persistentScrubber)
 	}
@@ -355,8 +350,8 @@ extension DockWidget: DockDelegate {
 				self.persistentScrubber.insertItems(at: IndexSet(integer: index))
 			}
 			self.displayScrubbers()
-			self.persistentScrubber.snp.updateConstraints({ m in
-				m.width.equalTo((Constants.dockItemSize.width + 8) * CGFloat(self.persistentItems.count))
+			self.persistentScrubber.snp.remakeConstraints({ m in
+				m.width.lessThanOrEqualTo((Constants.dockItemSize.width + 8) * CGFloat(self.persistentItems.count))
 			})
 		}
 	}

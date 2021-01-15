@@ -44,7 +44,7 @@
 		340C03B6259A556500DD9173 /* DockTiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockTiles.swift; sourceTree = "<group>"; };
 		3474195625645C1600C2DD20 /* SystemSoundHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSoundHelper.swift; sourceTree = "<group>"; };
 		34AFC98D246DC8E00068B3B6 /* Dock.pock */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dock.pock; sourceTree = BUILT_PRODUCTS_DIR; };
-		34AFC990246DC8E00068B3B6 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; };
+		34AFC990246DC8E00068B3B6 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		34AFC994246DC8E00068B3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		34C64DAC25699186006CB7F4 /* DockRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockRepository.swift; sourceTree = "<group>"; };
 		34C64DE0256AC8EB006CB7F4 /* AXSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AXSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
