@@ -67,8 +67,8 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
         self.hidePersistentItemsCheckbox.state  = Defaults[.hidePersistentItems]  	? .on : .off
         self.openFinderInsidePockCheckbox.state = Defaults[.openFinderInsidePock] 	? .on : .off
         self.hideTrashCheckbox.isEnabled        = !Defaults[.hidePersistentItems]
-		self.disableSystemDock.title = "\(DockHelper.currentMode == .disabled ? "Enable" : "Disable") System Dock".localized
 		self.itemSpacingTextField.stringValue = "\(Defaults[.itemSpacing])pt"
+		self.updateEnableDisableSystemDockButtonFor(mode: DockHelper.currentMode)
     }
 
     @IBAction private func didSelectNotificationBadgeRefreshRate(_: NSButton) {
@@ -125,9 +125,13 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
 			return Defaults[.hideSystemDock] == true ? .hidden : .visible
 		}()
 		DockHelper.setDockMode(newMode)
-		hideSystemDock.state 	 = newMode == .visible ? .off : .on
-		hideSystemDock.isEnabled = newMode != .disabled
-		disableSystemDock.title = "\(newMode == .disabled ? "Enable" : "Disable") System Dock".localized
+		updateEnableDisableSystemDockButtonFor(mode: newMode)
+	}
+	
+	private func updateEnableDisableSystemDockButtonFor(mode: DockMode) {
+		hideSystemDock.state 	 = mode == .visible ? .off : .on
+		hideSystemDock.isEnabled = mode != .disabled
+		disableSystemDock.title = "\(mode == .disabled ? "Enable" : "Disable") System Dock".localized
 	}
 
 }
