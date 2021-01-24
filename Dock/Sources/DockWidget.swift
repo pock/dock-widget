@@ -56,7 +56,9 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 														  name: .shouldReloadDock, object: nil)
 		/// Hide System Dock if needed
 		if let hideSystemDock = Defaults[.hideSystemDock] {
-			DockHelper.setDockMode(hideSystemDock ? .hidden : .visible)
+			if hideSystemDock && DockHelper.currentMode == .visible {
+				DockHelper.setDockMode(.hidden)
+			}
 		}else {
 			if DockHelper.currentMode == .disabled {
 				Defaults[.hideSystemDock] = true
