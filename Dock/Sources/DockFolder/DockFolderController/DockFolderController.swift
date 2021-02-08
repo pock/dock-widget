@@ -65,16 +65,15 @@ class DockFolderController: PKTouchBarMouseController {
     }
     
     override func didLoad() {
+        super.didLoad()
         scrubber.register(DockFolderItemView.self, forItemIdentifier: Constants.kDockFolterItemView)
     }
     
     @IBAction func willClose(_ button: NSButton?) {
-		edgeController?.tearDown(invalidate: true)
         dockFolderRepository.popToRootDockFolderController()
     }
     
     @IBAction func willDismiss(_ button: NSButton?) {
-		edgeController?.tearDown(invalidate: true)
 		dockFolderRepository.popDockFolderController()
     }
     
@@ -152,7 +151,6 @@ extension DockFolderController {
 				if elements.isEmpty == false {
 					self?.scrubber.scrollItem(at: 0, to: .none)
 				}
-				self?.reloadScreenEdgeController()
 			}
         }
     }

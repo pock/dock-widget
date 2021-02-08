@@ -163,7 +163,6 @@
 				34DF3217246DCCE8009B46B9 /* FileMonitor.swift */,
 				34DF3246246DCE2C009B46B9 /* Bridging-Header.h */,
 				34DF3247246DCECB009B46B9 /* Preferences */,
-				34F1C27B256831CB00AEA158 /* ScreenEdgeController */,
 				34DF3245246DCDDD009B46B9 /* Helpers */,
 			);
 			path = Sources;
@@ -271,13 +270,6 @@
 				34DF324E246DCECB009B46B9 /* DockWidgetPreferencePane.xib */,
 			);
 			path = DockWidgetPreferencePane;
-			sourceTree = "<group>";
-		};
-		34F1C27B256831CB00AEA158 /* ScreenEdgeController */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ScreenEdgeController;
 			sourceTree = "<group>";
 		};
 		A207221C2E07CE53C611D88F /* Frameworks */ = {
