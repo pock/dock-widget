@@ -204,6 +204,9 @@ extension DockRepository {
 				NSLog("[DockWidget]: Can't get app bundle identifier")
 				continue
 			}
+			/// Get app's correct URLString
+			guard let fileData = dataTile["file-data"] as?  [String: Any] else { NSLog("[Pock]: Can't get file data identifier"); continue }
+			guard let urlString = fileData["_CFURLString"] as? String  else { NSLog("[Pock]: Can't get url identifier"); continue }
 			/// Check if item already exists
 			guard defaultItems.contains(where: { $0.bundleIdentifier == bundleIdentifier }) == false else {
 				continue
@@ -212,7 +215,7 @@ extension DockRepository {
 			let item = DockItem(index + (Defaults[.hideFinder] ? 0 : 1),
 								bundleIdentifier,
 								name: label,
-								path: nil,
+                                path: URL(string: urlString),
 								icon: DockRepository.getIcon(forBundleIdentifier: bundleIdentifier),
 								pid_t: 0,
 								launching: false)
@@ -324,7 +327,7 @@ extension DockRepository {
 				return
 			}
 			/// Check from dock items
-			guard let item = self.defaultItems.first(where: { $0.bundleIdentifier == app.bundleIdentifier }) else {
+			guard let item = self.defaultItems.first(where: { $0.bundleIdentifier == app.bundleIdentifier && $0.path == app.bundleURL && $0.path == app.bundleURL }) else {
 				guard let runningItem = self.runningItems.enumerated().first(where: { $0.element.bundleIdentifier == app.bundleIdentifier }) else {
 					if let item = self.createItem(for: app) {
 						self.runningItems.append(item)
@@ -362,7 +365,7 @@ extension DockRepository {
 				return
 			}
 			if let app = notification?.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
-				if let result = self.dockItems.enumerated().first(where: { $0.element.bundleIdentifier == app.bundleIdentifier }) {
+                if let result = self.dockItems.enumerated().first(where: { $0.element.bundleIdentifier == app.bundleIdentifier && $0.element.path == app.bundleURL}) {
 					result.element.isLaunching = false
 					self.dockDelegate?.didUpdateActiveItem(result.element, at: result.offset, activated: notification?.name == NSWorkspace.didActivateApplicationNotification)
 				}
@@ -380,7 +383,8 @@ extension DockRepository {
 			return
 		}
 		for item in dockItems {
-			item.badge = PockDockHelper.sharedInstance()?.getBadgeCountForItem(withName: item.name)
+			item.badge = PockDockHelper.sharedInstance()?.getBadgeCountForItem(withPath: item.path)
+                ?? PockDockHelper.sharedInstance()?.getBadgeCountForItem(withName: item.name)
 		}
 		delegate.didUpdateBadge(for: self.dockItems)
 	}
