@@ -28,10 +28,7 @@ class AppExposeItemView: NSScrubberItemView {
 		self.mouseOverView.layer?.masksToBounds = true
 		self.mouseOverView.layer?.cornerRadius = 2
 		self.contentView.addSubview(self.mouseOverView, positioned: .below, relativeTo: self.preview)
-		self.mouseOverView.snp.makeConstraints({ m in
-			m.left.right.equalToSuperview()
-			m.top.bottom.equalToSuperview()
-		})
+		self.mouseOverView.edgesToSuperview()
 	}
 	
     /// Load preview view
@@ -39,9 +36,9 @@ class AppExposeItemView: NSScrubberItemView {
         self.preview = NSImageView(frame: .zero)
         self.preview.wantsLayer = true
         self.contentView.addSubview(self.preview)
-        self.preview.snp.makeConstraints({ m in
-            m.top.left.right.equalToSuperview()
-        })
+		self.preview.topToSuperview()
+		self.preview.leftToSuperview()
+		self.preview.rightToSuperview()
     }
     
     /// Load name label
@@ -51,13 +48,11 @@ class AppExposeItemView: NSScrubberItemView {
         nameLabel.autoresizingMask = .none
         nameLabel.font = NSFont.systemFont(ofSize: 6)
         contentView.addSubview(nameLabel)
-        nameLabel.snp.makeConstraints({ m in
-            m.width.equalTo(72)
-            m.left.right.equalToSuperview().inset(4)
-            m.bottom.equalToSuperview()
-            m.top.equalTo(preview.snp.bottom)
-            m.height.equalTo(6)
-        })
+		nameLabel.width(72)
+		nameLabel.height(6)
+		nameLabel.leftToSuperview(offset: -4)
+		nameLabel.rightToSuperview(offset: -4)
+		nameLabel.top(to: preview, preview.bottomAnchor)
     }
     
     /// Init
@@ -67,9 +62,7 @@ class AppExposeItemView: NSScrubberItemView {
         self.loadPreviewView()
         self.loadNameLabel()
         self.addSubview(self.contentView)
-        self.contentView.snp.makeConstraints({ m in
-            m.edges.equalToSuperview()
-        })
+		self.contentView.edgesToSuperview()
     }
     
     required init?(coder decoder: NSCoder) {

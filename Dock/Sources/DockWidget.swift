@@ -12,7 +12,7 @@ import PockKit
 
 class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	
-	var identifier: NSTouchBarItem.Identifier = NSTouchBarItem.Identifier(rawValue: "DockWidget")
+	static var identifier: String = "DockWidget"
 	var customizationLabel: String = "Dock"
 	var view: NSView!
 	
@@ -137,10 +137,8 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	private func configureSeparator() {
 		separator.wantsLayer = true
 		separator.layer?.backgroundColor = NSColor.darkGray.cgColor
-		separator.snp.makeConstraints({ m in
-			m.width.equalTo(1)
-			m.height.equalTo(20)
-		})
+		separator.width(1)
+		separator.height(20)
 		stackView.addArrangedSubview(separator)
 	}
 	
@@ -156,9 +154,8 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		persistentScrubber.isContinuous = false
 		persistentScrubber.itemAlignment = .none
 		persistentScrubber.scrubberLayout = layout
-		persistentScrubber.snp.makeConstraints({ m in
-			m.width.lessThanOrEqualTo((Constants.dockItemSize.width + 8) * CGFloat(persistentItems.count))
-		})
+		let width = (Constants.dockItemSize.width + 8) * CGFloat(persistentItems.count)
+		persistentScrubber.width(min: 0, max: width)
 		stackView.addArrangedSubview(persistentScrubber)
 	}
 	
@@ -352,9 +349,8 @@ extension DockWidget: DockDelegate {
 				self.persistentScrubber.insertItems(at: IndexSet(integer: index))
 			}
 			self.displayScrubbers()
-			self.persistentScrubber.snp.remakeConstraints({ m in
-				m.width.lessThanOrEqualTo((Constants.dockItemSize.width + 8) * CGFloat(self.persistentItems.count))
-			})
+			let width = (Constants.dockItemSize.width + 8) * CGFloat(self.persistentItems.count)
+			self.persistentScrubber.width(min: 0, max: width)
 		}
 	}
 	

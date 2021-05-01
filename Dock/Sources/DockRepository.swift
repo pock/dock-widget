@@ -8,7 +8,7 @@
 
 import Defaults
 
-protocol DockDelegate: class {
+protocol DockDelegate: AnyObject {
 	func didUpdateDockItem(_ item: DockItem, at index: Int, terminated: Bool, isDefaults: Bool)
 	func didUpdateActiveItem(_ item: DockItem, at index: Int, activated: Bool)
 	func didUpdatePersistentItem(_ item: DockItem, at index: Int, added: Bool)
