@@ -46,7 +46,10 @@ class DockFolderItemView: NSScrubberItemView {
         self.iconView.imageScaling = .scaleProportionallyDown
         self.iconView.wantsLayer = true
         self.contentView.addSubview(self.iconView)
-		self.iconView.leftToSuperview(offset: -2)
+		self.iconView.size(Constants.dockItemIconSize)
+		self.iconView.leftToSuperview(offset: 2)
+		self.iconView.topToSuperview(offset: 2, relation: .equalOrGreater, priority: .defaultHigh)
+		self.iconView.bottomToSuperview(offset: 2, relation: .equalOrGreater, priority: .defaultHigh)
 		self.iconView.centerYToSuperview()
     }
     
@@ -57,10 +60,11 @@ class DockFolderItemView: NSScrubberItemView {
         nameLabel.autoresizingMask = .none
         nameLabel.font = NSFont.systemFont(ofSize: 9)
         contentView.addSubview(nameLabel)
-		nameLabel.left(to: iconView, iconView.rightAnchor, offset: 6)
-		nameLabel.topToSuperview()
+		nameLabel.leftToRight(of: iconView, offset: 6)
 		nameLabel.rightToSuperview(offset: -2)
-		nameLabel.height(to: iconView, multiplier: 0.5)
+		nameLabel.height(10)
+		nameLabel.centerYToSuperview(offset: -5)
+		nameLabel.topToSuperview(offset: 2, relation: .equalOrGreater)
     }
     
     /// Load detail label
@@ -68,12 +72,14 @@ class DockFolderItemView: NSScrubberItemView {
         detailLabel = NSTextField(labelWithString: "")
         detailLabel.autoresizingMask = .none
         detailLabel.alignment = .left
-        detailLabel.font = NSFont.systemFont(ofSize: 9)
+        detailLabel.font = NSFont.systemFont(ofSize: 8)
         detailLabel.textColor = NSColor(calibratedRed: 124/255, green: 131/255, blue: 127/255, alpha: 1)
         contentView.addSubview(detailLabel)
 		detailLabel.left(to: nameLabel)
-		detailLabel.rightToSuperview(offset: -2)
-		detailLabel.bottomToSuperview(offset: -2)
+		detailLabel.right(to: nameLabel)
+		detailLabel.height(to: nameLabel)
+		detailLabel.topToBottom(of: nameLabel, offset: 1)
+		detailLabel.bottomToSuperview(offset: 2, relation: .equalOrGreater, priority: .defaultHigh)
     }
     
     /// Init

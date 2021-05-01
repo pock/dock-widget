@@ -8,7 +8,6 @@
 
 import Foundation
 import TinyConstraints
-import Defaults
 
 class DockItemView: NSScrubberItemView {
     
@@ -42,7 +41,7 @@ class DockItemView: NSScrubberItemView {
         self.iconView.wantsLayer = true
         self.contentView.addSubview(self.iconView)
 		self.iconView.size(Constants.dockItemIconSize)
-		self.iconView.topToSuperview(offset: -2)
+		self.iconView.topToSuperview(offset: 1)
 		self.iconView.centerXToSuperview()
     }
     
@@ -66,7 +65,7 @@ class DockItemView: NSScrubberItemView {
         self.badgeView.layer?.backgroundColor = NSColor.red.cgColor
         self.contentView.addSubview(self.badgeView, positioned: .above, relativeTo: self.iconView)
 		self.badgeView.size(Constants.dockItemBadgeSize)
-		self.badgeView.topToSuperview(offset: -1)
+		self.badgeView.top(to: iconView, offset: -1)
 		self.badgeView.centerXToSuperview(offset: 10)
     }
     
@@ -116,7 +115,7 @@ class DockItemView: NSScrubberItemView {
     
     public func set(isRunning: Bool) {
         if dotView == nil { loadDotView() }
-		dotView.layer?.opacity = isRunning && !Defaults[.hideRunningIndicator] ? 1 : 0
+		dotView.layer?.opacity = isRunning && !Preferences[.hideRunningIndicator] ? 1 : 0
     }
     public var isRunning: Bool { return dotView.layer?.opacity == 1 }
     

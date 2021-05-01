@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Defaults
 import PockKit
 
 class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
@@ -49,71 +48,75 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     }
     
     private func populatePopUpButtons() {
+		let refreshInterval: NotificationBadgeRefreshRateKeys = Preferences[.notificationBadgeRefreshInterval]
         self.notificationBadgeRefreshRatePicker.removeAllItems()
         self.notificationBadgeRefreshRatePicker.addItems(withTitles: NotificationBadgeRefreshRateKeys.allCases.map({ $0.toString() }))
-        self.notificationBadgeRefreshRatePicker.selectItem(withTitle: Defaults[.notificationBadgeRefreshInterval].toString())
-
+        self.notificationBadgeRefreshRatePicker.selectItem(withTitle: refreshInterval.toString())
+		
+		let appExposeSetting: AppExposeSettings = Preferences[.appExposeSettings]
         self.appExposeSettingsPicker.removeAllItems()
         self.appExposeSettingsPicker.addItems(withTitles: AppExposeSettings.allCases.map { $0.title })
-        self.appExposeSettingsPicker.selectItem(withTitle: Defaults[.appExposeSettings].title)
+        self.appExposeSettingsPicker.selectItem(withTitle: appExposeSetting.title)
     }
     
     private func setupCheckboxes() {
-		self.hideSystemDock.state				= Defaults[.hideSystemDock]	== true	? .on : .off
-        self.hideFinderCheckbox.state           = Defaults[.hideFinder]           	? .on : .off
-        self.showOnlyRunningApps.state          = Defaults[.showOnlyRunningApps]  	? .on : .off
-		self.hideRunningIndicator.state			= Defaults[.hideRunningIndicator] 	? .on : .off
-        self.hideTrashCheckbox.state            = Defaults[.hideTrash]            	? .on : .off
-        self.hidePersistentItemsCheckbox.state  = Defaults[.hidePersistentItems]  	? .on : .off
-        self.openFinderInsidePockCheckbox.state = Defaults[.openFinderInsidePock] 	? .on : .off
-        self.hideTrashCheckbox.isEnabled        = !Defaults[.hidePersistentItems]
-		self.itemSpacingTextField.stringValue = "\(Defaults[.itemSpacing])pt"
+		self.hideSystemDock.state				= Preferences[.hideSystemDock]	== true	? .on : .off
+        self.hideFinderCheckbox.state           = Preferences[.hideFinder]           	? .on : .off
+        self.showOnlyRunningApps.state          = Preferences[.showOnlyRunningApps]  	? .on : .off
+		self.hideRunningIndicator.state			= Preferences[.hideRunningIndicator] 	? .on : .off
+        self.hideTrashCheckbox.state            = Preferences[.hideTrash]            	? .on : .off
+        self.hidePersistentItemsCheckbox.state  = Preferences[.hidePersistentItems]  	? .on : .off
+        self.openFinderInsidePockCheckbox.state = Preferences[.openFinderInsidePock] 	? .on : .off
+        self.hideTrashCheckbox.isEnabled        = !Preferences[.hidePersistentItems]
+		
+		let itemSpacing: CGFloat = Preferences[.itemSpacing]
+		self.itemSpacingTextField.stringValue = "\(Int(itemSpacing))pt"
 		self.updateEnableDisableSystemDockButtonFor(mode: DockHelper.currentMode)
     }
 
     @IBAction private func didSelectNotificationBadgeRefreshRate(_: NSButton) {
-        Defaults[.notificationBadgeRefreshInterval] = NotificationBadgeRefreshRateKeys.allCases[self.notificationBadgeRefreshRatePicker.indexOfSelectedItem]
+		Preferences[.notificationBadgeRefreshInterval] = NotificationBadgeRefreshRateKeys.allCases[notificationBadgeRefreshRatePicker.indexOfSelectedItem].rawValue
         NSWorkspace.shared.notificationCenter.post(name: .didChangeNotificationBadgeRefreshRate, object: nil)
     }
 
     @IBAction func didSelectAppExposeSettings(_: NSButton) {
-        Defaults[.appExposeSettings] = AppExposeSettings.allCases[self.appExposeSettingsPicker.indexOfSelectedItem]
+		Preferences[.appExposeSettings] = AppExposeSettings.allCases[appExposeSettingsPicker.indexOfSelectedItem].rawValue
     }
     
 	@IBAction private func didChangeHideSystemDockValue(button: NSButton) {
 		let shouldHide = button.state == .on
-		Defaults[.hideSystemDock] = shouldHide
+		Preferences[.hideSystemDock] = shouldHide
 		DockHelper.setDockMode(shouldHide ? .hidden : .visible)
 	}
 	
     @IBAction private func didChangeHideFinderValue(button: NSButton) {
-        Defaults[.hideFinder] = button.state == .on
+		Preferences[.hideFinder] = button.state == .on
         NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, object: nil)
     }
     
     @IBAction private func didChangeShowOnlyRunningAppsValue(button: NSButton) {
-        Defaults[.showOnlyRunningApps] = button.state == .on
+		Preferences[.showOnlyRunningApps] = button.state == .on
         NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, object: nil)
     }
 	
 	@IBAction private func didChangeHideRunningIndicatorValue(button: NSButton) {
-		Defaults[.hideRunningIndicator] = button.state == .on
+		Preferences[.hideRunningIndicator] = button.state == .on
 		NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScrubbersLayout, object: nil)
 	}
     
     @IBAction private func didChangeHideTrashValue(button: NSButton) {
-        Defaults[.hideTrash] = button.state == .on
+		Preferences[.hideTrash] = button.state == .on
         NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, object: nil)
     }
     
     @IBAction private func didChangeHidePersistentValue(button: NSButton) {
-        Defaults[.hidePersistentItems] = button.state == .on
-        hideTrashCheckbox.isEnabled = !Defaults[.hidePersistentItems]
+		Preferences[.hidePersistentItems] = button.state == .on
+        hideTrashCheckbox.isEnabled = !Preferences[.hidePersistentItems]
         NSWorkspace.shared.notificationCenter.post(name: .shouldReloadPersistentItems, object: nil)
     }
     
     @IBAction private func didChangeOpenFinderInsidePockValue(button: NSButton) {
-        Defaults[.openFinderInsidePock] = button.state == .on
+		Preferences[.openFinderInsidePock] = button.state == .on
     }
 	
 	@IBAction private func enableOrDisableSystemDock(_ sender: Any?) {
@@ -122,7 +125,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
 			guard previousMode == .disabled else {
 				return .disabled
 			}
-			return Defaults[.hideSystemDock] == true ? .hidden : .visible
+			return Preferences[.hideSystemDock] == true ? .hidden : .visible
 		}()
 		DockHelper.setDockMode(newMode)
 		updateEnableDisableSystemDockButtonFor(mode: newMode)
@@ -139,7 +142,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
 extension DockWidgetPreferencePane: NSTextFieldDelegate {
     func controlTextDidEndEditing(_ obj: Notification) {
         let value = itemSpacingTextField.stringValue.replacingOccurrences(of: "pt", with: "")
-        Defaults[.itemSpacing] = Int(value) ?? 8
+		Preferences[.itemSpacing] = CGFloat(Int(value) ?? 8)
         NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScrubbersLayout, object: nil)
     }
 }

@@ -23,22 +23,22 @@ class AppExposeItemView: NSScrubberItemView {
     
 	/// Load mouseover view
 	private func loadMouseOverView() {
-		self.mouseOverView = NSView(frame: .zero)
-		self.mouseOverView.wantsLayer = true
-		self.mouseOverView.layer?.masksToBounds = true
-		self.mouseOverView.layer?.cornerRadius = 2
-		self.contentView.addSubview(self.mouseOverView, positioned: .below, relativeTo: self.preview)
-		self.mouseOverView.edgesToSuperview()
+		mouseOverView = NSView(frame: .zero)
+		mouseOverView.wantsLayer = true
+		mouseOverView.layer?.masksToBounds = true
+		mouseOverView.layer?.cornerRadius = 1
+		preview.addSubview(mouseOverView)
+		mouseOverView.edgesToSuperview()
 	}
 	
     /// Load preview view
     private func loadPreviewView() {
-        self.preview = NSImageView(frame: .zero)
-        self.preview.wantsLayer = true
-        self.contentView.addSubview(self.preview)
-		self.preview.topToSuperview()
-		self.preview.leftToSuperview()
-		self.preview.rightToSuperview()
+        preview = NSImageView(frame: .zero)
+        preview.wantsLayer = true
+        contentView.addSubview(preview)
+		preview.topToSuperview()
+		preview.leftToSuperview()
+		preview.rightToSuperview()
     }
     
     /// Load name label
@@ -48,11 +48,11 @@ class AppExposeItemView: NSScrubberItemView {
         nameLabel.autoresizingMask = .none
         nameLabel.font = NSFont.systemFont(ofSize: 6)
         contentView.addSubview(nameLabel)
-		nameLabel.width(72)
 		nameLabel.height(6)
-		nameLabel.leftToSuperview(offset: -4)
-		nameLabel.rightToSuperview(offset: -4)
-		nameLabel.top(to: preview, preview.bottomAnchor)
+		nameLabel.left(to: preview, offset: 2)
+		nameLabel.right(to: preview, offset: 2)
+		nameLabel.topToBottom(of: preview, offset: 1)
+		nameLabel.bottomToSuperview()
     }
     
     /// Init
@@ -72,7 +72,7 @@ class AppExposeItemView: NSScrubberItemView {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.set(preview: nil, imageScaling: .scaleAxesIndependently)
-        self.set(name:    nil)
+        self.set(name: nil)
     }
     
     override func viewDidChangeBackingProperties() {
@@ -98,7 +98,7 @@ class AppExposeItemView: NSScrubberItemView {
     
 	public func set(isMouseOver: Bool) {
 		if mouseOverView == nil { loadMouseOverView() }
-		mouseOverView.layer?.backgroundColor = (isMouseOver ? NSColor.darkGray : NSColor.clear).cgColor
+		mouseOverView.layer?.backgroundColor = (isMouseOver ? NSColor.white.withAlphaComponent(0.325) : NSColor.clear).cgColor
 	}
 	
 }

@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import Defaults
 import PockKit
+import TinyConstraints
 
 class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	
@@ -26,6 +26,17 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	private var separator:          NSView! 	 = NSView(frame:     NSRect(x: 0, y: 0, width: 1, 	height: 20))
 	private var persistentScrubber: NSScrubber!  = NSScrubber(frame: NSRect(x: 0, y: 0, width: 50, 	height: 30))
 	
+	private var persistentScrubberWidthConstraint: NSLayoutConstraint {
+		if let previous = persistentScrubber.constraints.first(where: { $0.identifier == "persistentScrubber.width" }) {
+			return previous
+		} else {
+			let constraint = persistentScrubber.width(0)
+			constraint.identifier = "persistentScrubber.width"
+			constraint.isActive = true
+			return constraint
+		}
+	}
+	
 	/// Data
 	private var dockItems:       [DockItem] = []
 	private var persistentItems: [DockItem] = []
@@ -33,6 +44,10 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	private var cachedPersistentItemViews: [DockItemView] = []
 	private var itemViewWithMouseOver: 	  DockItemView?
 	private var itemViewWithDraggingOver: DockItemView?
+	
+	var imageForCustomization: NSImage {
+		return NSImage(named: NSImage.preferencesGeneralName)!
+	}
 	
 	override required init() {
 		super.init()
@@ -55,13 +70,13 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(deepReload(_:)),
 														  name: .shouldReloadDock, object: nil)
 		/// Hide System Dock if needed
-		if let hideSystemDock = Defaults[.hideSystemDock] {
+		if let hideSystemDock: Bool = Preferences[.hideSystemDock] {
 			if hideSystemDock && DockHelper.currentMode == .visible {
 				DockHelper.setDockMode(.hidden)
 			}
 		}else {
 			if DockHelper.currentMode == .disabled {
-				Defaults[.hideSystemDock] = true
+				Preferences[.hideSystemDock] = true
 				DockHelper.setDockMode(.hidden)
 			}
 		}
@@ -99,21 +114,21 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	}
 	
 	@objc private func displayScrubbers() {
-		self.separator.isHidden          = Defaults[.hidePersistentItems] || persistentItems.isEmpty
-		self.persistentScrubber.isHidden = Defaults[.hidePersistentItems] || persistentItems.isEmpty
+		self.separator.isHidden          = Preferences[.hidePersistentItems] || persistentItems.isEmpty
+		self.persistentScrubber.isHidden = Preferences[.hidePersistentItems] || persistentItems.isEmpty
 	}
 	
 	@objc private func reloadScrubbersLayout() {
 		cachedDockItemViews.removeAll()
 		let dockLayout              = NSScrubberFlowLayout()
 		dockLayout.itemSize         = Constants.dockItemSize
-		dockLayout.itemSpacing      = CGFloat(Defaults[.itemSpacing])
+		dockLayout.itemSpacing      = Preferences[.itemSpacing]
 		dockScrubber.scrubberLayout = dockLayout
 		dockScrubber.reloadData()
 		cachedPersistentItemViews.removeAll()
 		let persistentLayout              = NSScrubberFlowLayout()
 		persistentLayout.itemSize         = Constants.dockItemSize
-		persistentLayout.itemSpacing      = CGFloat(Defaults[.itemSpacing])
+		persistentLayout.itemSpacing      = Preferences[.itemSpacing]
 		persistentScrubber.scrubberLayout = persistentLayout
 		persistentScrubber.reloadData()
 	}
@@ -122,7 +137,7 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	private func configureDockScrubber() {
 		let layout = NSScrubberFlowLayout()
 		layout.itemSize    = Constants.dockItemSize
-		layout.itemSpacing = CGFloat(Defaults[.itemSpacing])
+		layout.itemSpacing = Preferences[.itemSpacing]
 		dockScrubber.dataSource = self
 		dockScrubber.delegate = self
 		dockScrubber.showsAdditionalContentIndicators = true
@@ -146,7 +161,7 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	private func configurePersistentScrubber() {
 		let layout = NSScrubberFlowLayout()
 		layout.itemSize    = Constants.dockItemSize
-		layout.itemSpacing = CGFloat(Defaults[.itemSpacing])
+		layout.itemSpacing = Preferences[.itemSpacing]
 		persistentScrubber.dataSource = self
 		persistentScrubber.delegate = self
 		persistentScrubber.showsAdditionalContentIndicators = true
@@ -154,8 +169,7 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 		persistentScrubber.isContinuous = false
 		persistentScrubber.itemAlignment = .none
 		persistentScrubber.scrubberLayout = layout
-		let width = (Constants.dockItemSize.width + 8) * CGFloat(persistentItems.count)
-		persistentScrubber.width(min: 0, max: width)
+		persistentScrubberWidthConstraint.constant = (Constants.dockItemSize.width + 8) * CGFloat(min(persistentItems.count, 3))
 		stackView.addArrangedSubview(persistentScrubber)
 	}
 	
@@ -349,8 +363,7 @@ extension DockWidget: DockDelegate {
 				self.persistentScrubber.insertItems(at: IndexSet(integer: index))
 			}
 			self.displayScrubbers()
-			let width = (Constants.dockItemSize.width + 8) * CGFloat(self.persistentItems.count)
-			self.persistentScrubber.width(min: 0, max: width)
+			self.persistentScrubberWidthConstraint.constant = (Constants.dockItemSize.width + 8) * CGFloat(min(self.persistentItems.count, 3))
 		}
 	}
 	
