@@ -46,7 +46,7 @@ class DockWidget: NSObject, PKWidget, PKScreenEdgeMouseDelegate {
 	private var itemViewWithDraggingOver: DockItemView?
 	
 	var imageForCustomization: NSImage {
-		return NSImage(named: NSImage.preferencesGeneralName)!
+		return Bundle(for: DockWidget.self).image(forResource: "WidgetPreview")!
 	}
 	
 	override required init() {
