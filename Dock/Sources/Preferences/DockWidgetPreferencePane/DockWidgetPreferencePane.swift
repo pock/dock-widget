@@ -29,6 +29,17 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     /// Preferenceable
     static var nibName: NSNib.Name = "DockWidgetPreferencePane"
     
+    func reset() {
+        Preferences.reset()
+        populatePopUpButtons()
+        setupCheckboxes()
+        NSWorkspace.shared.notificationCenter.post(name: .shouldReloadDock, object: nil)
+        NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScrubbersLayout, object: nil)
+        NSWorkspace.shared.notificationCenter.post(name: .shouldReloadPersistentItems, object: nil)
+        DockHelper.setDockMode(.hidden)
+        updateEnableDisableSystemDockButtonFor(mode: .hidden)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.superview?.wantsLayer = true
@@ -44,7 +55,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
     
     private func setupItemSpacingTextField() {
         self.itemSpacingTextField.delegate = self
-        self.itemSpacingTextField.placeholderString = "8pt"
+        self.itemSpacingTextField.placeholderString = "8"
     }
     
     private func populatePopUpButtons() {
@@ -70,7 +81,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
         self.hideTrashCheckbox.isEnabled        = !Preferences[.hidePersistentItems]
 		
 		let itemSpacing: CGFloat = Preferences[.itemSpacing]
-		self.itemSpacingTextField.stringValue = "\(Int(itemSpacing))pt"
+		self.itemSpacingTextField.stringValue = "\(Int(itemSpacing))"
 		self.updateEnableDisableSystemDockButtonFor(mode: DockHelper.currentMode)
     }
 
@@ -141,7 +152,7 @@ class DockWidgetPreferencePane: NSViewController, PKWidgetPreference {
 
 extension DockWidgetPreferencePane: NSTextFieldDelegate {
     func controlTextDidEndEditing(_ obj: Notification) {
-        let value = itemSpacingTextField.stringValue.replacingOccurrences(of: "pt", with: "")
+        let value = itemSpacingTextField.stringValue
 		Preferences[.itemSpacing] = CGFloat(Int(value) ?? 8)
         NSWorkspace.shared.notificationCenter.post(name: .shouldReloadScrubbersLayout, object: nil)
     }

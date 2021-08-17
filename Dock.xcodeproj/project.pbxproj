@@ -399,7 +399,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Copy widget to destination folder.\nif [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n  echo \"Copying ${PRODUCT_NAME}.pock to destination folder\"\n  cp -r $TARGET_BUILD_DIR/$PRODUCT_NAME.pock ~/Library/Application\\ Support/Pock/Widgets/\nfi\n";
+			shellScript = "# Copy widget to destination folder.\nif [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n  echo \"Installing ${PRODUCT_NAME}.pock\"\n  rm -rf ~/Downloads/$PRODUCT_NAME.pock\n  rm -rf ~/Application\\ Support/Pock/Widgets/$PRODUCT_NAME.pock\n  cp -r $TARGET_BUILD_DIR/$PRODUCT_NAME.pock ~/Downloads/$PRODUCT_NAME.pock\n  open ~/Downloads/$PRODUCT_NAME.pock\nfi\n";
 		};
 		34C64E05256ACC2D006CB7F4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
