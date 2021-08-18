@@ -86,10 +86,10 @@ internal struct Preferences {
         get {
             guard let value = UserDefaults.standard.value(forKey: key.rawValue) as? T else {
                 if T.self == NotificationBadgeRefreshRateKeys.self, let raw = UserDefaults.standard.value(forKey: key.rawValue) as? Double {
-                    return NotificationBadgeRefreshRateKeys(rawValue: raw) as! T
+                    return (NotificationBadgeRefreshRateKeys(rawValue: raw) ?? .tenSeconds) as! T
                 }
                 if T.self == AppExposeSettings.self, let raw = UserDefaults.standard.value(forKey: key.rawValue) as? String {
-                    return AppExposeSettings(rawValue: raw) as! T
+                    return (AppExposeSettings(rawValue: raw) ?? .ifNeeded) as! T
                 }
                 switch key {
                 case .notificationBadgeRefreshInterval:
