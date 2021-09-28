@@ -12,6 +12,5 @@ target 'Dock' do
 
   # Pods for Dock
   pod 'PockKit'
-  pod 'Defaults'
 
 end
