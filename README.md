@@ -7,6 +7,6 @@ Display macOS Dock in Touch Bar and enjoy your screen in full-size every time!
 * It now includes multi-window support!
 
 # Preview
-<img src="https://pock.dev/assets/img/preview/widgets/pock_dock_widget.png" height="60">
+<img src="https://pock.app/_nuxt/img/pock_dock_widget.6c84647.png" height="60">
 
-<img src="https://pock.dev/assets/img/preview/widgets/pock_app_expose.png" height="60">
+<img src="https://pock.app/_nuxt/img/pock_app_expose.122ed53.png" height="60">
