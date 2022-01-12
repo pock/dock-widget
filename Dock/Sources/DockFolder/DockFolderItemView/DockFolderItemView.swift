@@ -27,10 +27,7 @@ class DockFolderItemView: NSScrubberItemView {
         self.frontmostView.layer?.masksToBounds = true
         self.frontmostView.layer?.cornerRadius = Constants.dockItemCornerRadius
         self.contentView.addSubview(self.frontmostView, positioned: .below, relativeTo: self.iconView)
-        self.frontmostView.snp.makeConstraints({ m in
-            m.left.right.equalToSuperview()
-            m.top.bottom.equalToSuperview()
-        })
+		self.frontmostView.edgesToSuperview()
     }
 	
 	/// Load mouseover view
@@ -40,10 +37,7 @@ class DockFolderItemView: NSScrubberItemView {
 		self.mouseOverView.layer?.masksToBounds = true
 		self.mouseOverView.layer?.cornerRadius = Constants.dockItemCornerRadius
 		self.contentView.addSubview(self.mouseOverView, positioned: .below, relativeTo: self.iconView)
-		self.mouseOverView.snp.makeConstraints({ m in
-			m.left.right.equalToSuperview()
-			m.top.bottom.equalToSuperview()
-		})
+		self.mouseOverView.edgesToSuperview()
 	}
     
     /// Load icon view
@@ -52,11 +46,11 @@ class DockFolderItemView: NSScrubberItemView {
         self.iconView.imageScaling = .scaleProportionallyDown
         self.iconView.wantsLayer = true
         self.contentView.addSubview(self.iconView)
-        self.iconView.snp.makeConstraints({ m in
-            m.width.height.equalTo(Constants.dockItemIconSize)
-            m.left.equalToSuperview().inset(2)
-            m.centerY.equalToSuperview()
-        })
+		self.iconView.size(Constants.dockItemIconSize)
+		self.iconView.leftToSuperview(offset: 2)
+		self.iconView.topToSuperview(offset: 2, relation: .equalOrGreater, priority: .defaultHigh)
+		self.iconView.bottomToSuperview(offset: 2, relation: .equalOrGreater, priority: .defaultHigh)
+		self.iconView.centerYToSuperview()
     }
     
     /// Load name label
@@ -66,12 +60,11 @@ class DockFolderItemView: NSScrubberItemView {
         nameLabel.autoresizingMask = .none
         nameLabel.font = NSFont.systemFont(ofSize: 9)
         contentView.addSubview(nameLabel)
-        nameLabel.snp.makeConstraints({ m in
-            m.left.equalTo(iconView.snp.right).offset(6)
-            m.top.equalTo(iconView)
-            m.right.equalToSuperview().inset(2)
-            m.height.equalTo(iconView).dividedBy(2)
-        })
+		nameLabel.leftToRight(of: iconView, offset: 6)
+		nameLabel.rightToSuperview(offset: -2)
+		nameLabel.height(10)
+		nameLabel.centerYToSuperview(offset: -5)
+		nameLabel.topToSuperview(offset: 2, relation: .equalOrGreater)
     }
     
     /// Load detail label
@@ -79,15 +72,14 @@ class DockFolderItemView: NSScrubberItemView {
         detailLabel = NSTextField(labelWithString: "")
         detailLabel.autoresizingMask = .none
         detailLabel.alignment = .left
-        detailLabel.font = NSFont.systemFont(ofSize: 9)
+        detailLabel.font = NSFont.systemFont(ofSize: 8)
         detailLabel.textColor = NSColor(calibratedRed: 124/255, green: 131/255, blue: 127/255, alpha: 1)
         contentView.addSubview(detailLabel)
-        detailLabel.snp.makeConstraints({ m in
-            m.left.equalTo(nameLabel)
-            m.top.equalTo(nameLabel.snp.bottom)
-            m.right.equalToSuperview().inset(2)
-            m.bottom.equalToSuperview().inset(2)
-        })
+		detailLabel.left(to: nameLabel)
+		detailLabel.right(to: nameLabel)
+		detailLabel.height(to: nameLabel)
+		detailLabel.topToBottom(of: nameLabel, offset: 1)
+		detailLabel.bottomToSuperview(offset: 2, relation: .equalOrGreater, priority: .defaultHigh)
     }
     
     /// Init
@@ -98,9 +90,7 @@ class DockFolderItemView: NSScrubberItemView {
         self.loadNameLabel()
         self.loadDetailLabel()
         self.addSubview(self.contentView)
-        self.contentView.snp.makeConstraints({ m in
-            m.edges.equalToSuperview()
-        })
+		self.contentView.edgesToSuperview()
     }
     
     required init?(coder decoder: NSCoder) {

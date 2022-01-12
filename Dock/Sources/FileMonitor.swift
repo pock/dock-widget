@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol FileMonitorDelegate: class {
+protocol FileMonitorDelegate: AnyObject {
     func didChange(fileMonitor: FileMonitor, paths: [String])
 }
 

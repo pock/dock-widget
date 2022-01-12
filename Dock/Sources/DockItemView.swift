@@ -7,8 +7,7 @@
 //
 
 import Foundation
-import SnapKit
-import Defaults
+import TinyConstraints
 
 class DockItemView: NSScrubberItemView {
     
@@ -32,10 +31,7 @@ class DockItemView: NSScrubberItemView {
         self.frontmostView.layer?.masksToBounds = true
         self.frontmostView.layer?.cornerRadius = Constants.dockItemCornerRadius
         self.contentView.addSubview(self.frontmostView, positioned: .below, relativeTo: self.iconView)
-        self.frontmostView.snp.makeConstraints({ m in
-            m.left.right.equalToSuperview()
-            m.top.bottom.equalToSuperview()
-        })
+		self.frontmostView.edgesToSuperview()
     }
     
     /// Load icon view
@@ -44,11 +40,9 @@ class DockItemView: NSScrubberItemView {
         self.iconView.imageScaling = .scaleProportionallyDown
         self.iconView.wantsLayer = true
         self.contentView.addSubview(self.iconView)
-        self.iconView.snp.makeConstraints({ m in
-            m.width.height.equalTo(Constants.dockItemIconSize)
-            m.top.equalToSuperview().inset(2)
-            m.centerX.equalToSuperview()
-        })
+		self.iconView.size(Constants.dockItemIconSize)
+		self.iconView.topToSuperview(offset: 1)
+		self.iconView.centerXToSuperview()
     }
     
     /// Load dot view
@@ -58,11 +52,9 @@ class DockItemView: NSScrubberItemView {
         self.dotView.layer?.cornerRadius = Constants.dockItemDotSize.width / 2
         self.dotView.layer?.backgroundColor = NSColor.lightGray.cgColor
         self.contentView.addSubview(self.dotView, positioned: .above, relativeTo: self.iconView)
-        self.dotView.snp.makeConstraints({ m in
-            m.width.height.equalTo(Constants.dockItemDotSize)
-            m.bottom.equalToSuperview()
-            m.centerX.equalToSuperview()
-        })
+		self.dotView.size(Constants.dockItemDotSize)
+		self.dotView.bottomToSuperview()
+		self.dotView.centerXToSuperview()
     }
     
     /// Load badge view
@@ -72,11 +64,9 @@ class DockItemView: NSScrubberItemView {
         self.badgeView.layer?.cornerRadius = Constants.dockItemBadgeSize.width / 2
         self.badgeView.layer?.backgroundColor = NSColor.red.cgColor
         self.contentView.addSubview(self.badgeView, positioned: .above, relativeTo: self.iconView)
-        self.badgeView.snp.makeConstraints({ m in
-            m.width.height.equalTo(Constants.dockItemBadgeSize.width)
-            m.top.equalToSuperview().inset(1)
-            m.centerX.equalToSuperview().offset(10)
-        })
+		self.badgeView.size(Constants.dockItemBadgeSize)
+		self.badgeView.top(to: iconView, offset: -1)
+		self.badgeView.centerXToSuperview(offset: 10)
     }
     
     /// Init
@@ -84,9 +74,7 @@ class DockItemView: NSScrubberItemView {
         super.init(frame: NSRect(origin: .zero, size: Constants.dockItemSize))
         self.contentView = NSView(frame: .zero)
         self.addSubview(self.contentView)
-        self.contentView.snp.makeConstraints({ m in
-            m.edges.equalToSuperview()
-        })
+		self.contentView.edgesToSuperview()
     }
     
     required init?(coder decoder: NSCoder) {
@@ -127,7 +115,7 @@ class DockItemView: NSScrubberItemView {
     
     public func set(isRunning: Bool) {
         if dotView == nil { loadDotView() }
-		dotView.layer?.opacity = isRunning && !Defaults[.hideRunningIndicator] ? 1 : 0
+		dotView.layer?.opacity = isRunning && !Preferences[.hideRunningIndicator] ? 1 : 0
     }
     public var isRunning: Bool { return dotView.layer?.opacity == 1 }
     

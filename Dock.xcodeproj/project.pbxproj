@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		340C03B2259A54F600DD9173 /* DockHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340C03B1259A54F600DD9173 /* DockHelper.swift */; };
 		340C03B7259A556500DD9173 /* DockTiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340C03B6259A556500DD9173 /* DockTiles.swift */; };
+		34291B62263DFE1000768B08 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 34291B61263DFE1000768B08 /* Media.xcassets */; };
 		3474195725645C1600C2DD20 /* SystemSoundHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3474195625645C1600C2DD20 /* SystemSoundHelper.swift */; };
 		34B6D10925A7542C001C925C /* Pods_Dock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4FAF7D65593AF206FD9F07A /* Pods_Dock.framework */; };
 		34C64DAD25699186006CB7F4 /* DockRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C64DAC25699186006CB7F4 /* DockRepository.swift */; };
@@ -42,6 +43,7 @@
 		1177E54C6982D8AD0A82259D /* Pods-Dock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dock.debug.xcconfig"; path = "Target Support Files/Pods-Dock/Pods-Dock.debug.xcconfig"; sourceTree = "<group>"; };
 		340C03B1259A54F600DD9173 /* DockHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockHelper.swift; sourceTree = "<group>"; };
 		340C03B6259A556500DD9173 /* DockTiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockTiles.swift; sourceTree = "<group>"; };
+		34291B61263DFE1000768B08 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		3474195625645C1600C2DD20 /* SystemSoundHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSoundHelper.swift; sourceTree = "<group>"; };
 		34AFC98D246DC8E00068B3B6 /* Dock.pock */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dock.pock; sourceTree = BUILT_PRODUCTS_DIR; };
 		34AFC990246DC8E00068B3B6 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -120,6 +122,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		34291B5E263DFCF000768B08 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				34291B61263DFE1000768B08 /* Media.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		34AFC983246DC8E00068B3B6 = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +155,7 @@
 				34AFC994246DC8E00068B3B6 /* Info.plist */,
 				34AFC991246DC8E00068B3B6 /* Sources */,
 				34D4A1B6246DE4FA005FA975 /* Localisations */,
+				34291B5E263DFCF000768B08 /* Resources */,
 			);
 			path = Dock;
 			sourceTree = "<group>";
@@ -360,6 +371,7 @@
 			files = (
 				34DF3253246DCECC009B46B9 /* DockWidgetPreferencePane.strings in Resources */,
 				34D4A1BF246DE4FA005FA975 /* Localizable.strings in Resources */,
+				34291B62263DFE1000768B08 /* Media.xcassets in Resources */,
 				34DF323C246DCCE8009B46B9 /* DockFolderController.xib in Resources */,
 				34DF3232246DCCE8009B46B9 /* AppExposeController.xib in Resources */,
 				34DF3255246DCECC009B46B9 /* DockWidgetPreferencePane.xib in Resources */,
@@ -387,7 +399,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Copy widget to destination folder.\nif [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n  echo \"Copying ${PRODUCT_NAME}.pock to destination folder\"\n  cp -r $TARGET_BUILD_DIR/$PRODUCT_NAME.pock ~/Library/Application\\ Support/Pock/Widgets/\nfi\n";
+			shellScript = "# Copy widget to destination folder.\nif [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n  echo \"Installing ${PRODUCT_NAME}.pock\"\n  rm -rf ~/Downloads/$PRODUCT_NAME.pock\n  rm -rf ~/Application\\ Support/Pock/Widgets/$PRODUCT_NAME.pock\n  cp -r $TARGET_BUILD_DIR/$PRODUCT_NAME.pock ~/Downloads/$PRODUCT_NAME.pock\n  open ~/Downloads/$PRODUCT_NAME.pock\nfi\n";
 		};
 		34C64E05256ACC2D006CB7F4 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -648,7 +660,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 788D9WZ9Z3;
 				INFOPLIST_FILE = Dock/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application\\ Support/Pock/Widgets";
@@ -658,7 +670,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pigigaldi.pock.Dock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -677,7 +689,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 788D9WZ9Z3;
 				INFOPLIST_FILE = Dock/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application\\ Support/Pock/Widgets";
@@ -687,7 +699,7 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pigigaldi.pock.Dock;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

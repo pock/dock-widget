@@ -23,25 +23,22 @@ class AppExposeItemView: NSScrubberItemView {
     
 	/// Load mouseover view
 	private func loadMouseOverView() {
-		self.mouseOverView = NSView(frame: .zero)
-		self.mouseOverView.wantsLayer = true
-		self.mouseOverView.layer?.masksToBounds = true
-		self.mouseOverView.layer?.cornerRadius = 2
-		self.contentView.addSubview(self.mouseOverView, positioned: .below, relativeTo: self.preview)
-		self.mouseOverView.snp.makeConstraints({ m in
-			m.left.right.equalToSuperview()
-			m.top.bottom.equalToSuperview()
-		})
+		mouseOverView = NSView(frame: .zero)
+		mouseOverView.wantsLayer = true
+		mouseOverView.layer?.masksToBounds = true
+		mouseOverView.layer?.cornerRadius = 1
+		preview.addSubview(mouseOverView)
+		mouseOverView.edgesToSuperview()
 	}
 	
     /// Load preview view
     private func loadPreviewView() {
-        self.preview = NSImageView(frame: .zero)
-        self.preview.wantsLayer = true
-        self.contentView.addSubview(self.preview)
-        self.preview.snp.makeConstraints({ m in
-            m.top.left.right.equalToSuperview()
-        })
+        preview = NSImageView(frame: .zero)
+        preview.wantsLayer = true
+        contentView.addSubview(preview)
+		preview.topToSuperview()
+		preview.leftToSuperview()
+		preview.rightToSuperview()
     }
     
     /// Load name label
@@ -51,13 +48,11 @@ class AppExposeItemView: NSScrubberItemView {
         nameLabel.autoresizingMask = .none
         nameLabel.font = NSFont.systemFont(ofSize: 6)
         contentView.addSubview(nameLabel)
-        nameLabel.snp.makeConstraints({ m in
-            m.width.equalTo(72)
-            m.left.right.equalToSuperview().inset(4)
-            m.bottom.equalToSuperview()
-            m.top.equalTo(preview.snp.bottom)
-            m.height.equalTo(6)
-        })
+		nameLabel.height(6)
+		nameLabel.left(to: preview, offset: 2)
+		nameLabel.right(to: preview, offset: 2)
+		nameLabel.topToBottom(of: preview, offset: 1)
+		nameLabel.bottomToSuperview()
     }
     
     /// Init
@@ -67,9 +62,7 @@ class AppExposeItemView: NSScrubberItemView {
         self.loadPreviewView()
         self.loadNameLabel()
         self.addSubview(self.contentView)
-        self.contentView.snp.makeConstraints({ m in
-            m.edges.equalToSuperview()
-        })
+		self.contentView.edgesToSuperview()
     }
     
     required init?(coder decoder: NSCoder) {
@@ -79,7 +72,7 @@ class AppExposeItemView: NSScrubberItemView {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.set(preview: nil, imageScaling: .scaleAxesIndependently)
-        self.set(name:    nil)
+        self.set(name: nil)
     }
     
     override func viewDidChangeBackingProperties() {
@@ -105,7 +98,7 @@ class AppExposeItemView: NSScrubberItemView {
     
 	public func set(isMouseOver: Bool) {
 		if mouseOverView == nil { loadMouseOverView() }
-		mouseOverView.layer?.backgroundColor = (isMouseOver ? NSColor.darkGray : NSColor.clear).cgColor
+		mouseOverView.layer?.backgroundColor = (isMouseOver ? NSColor.white.withAlphaComponent(0.325) : NSColor.clear).cgColor
 	}
 	
 }

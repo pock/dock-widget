@@ -6,9 +6,7 @@
 //  Copyright © 2020 Pierluigi Galdi. All rights reserved.
 //
 
-import Defaults
-
-protocol DockDelegate: class {
+protocol DockDelegate: AnyObject {
 	func didUpdateDockItem(_ item: DockItem, at index: Int, terminated: Bool, isDefaults: Bool)
 	func didUpdateActiveItem(_ item: DockItem, at index: Int, activated: Bool)
 	func didUpdatePersistentItem(_ item: DockItem, at index: Int, added: Bool)
@@ -23,9 +21,12 @@ class DockRepository {
 	/// Core
 	private var fileMonitor: FileMonitor!
 	private var notificationBadgeRefreshTimer: Timer!
-	private var shouldShowNotificationBadge: Bool { return Defaults[.notificationBadgeRefreshInterval] != .never }
-	private var showOnlyRunningApps: 		 Bool { return Defaults[.showOnlyRunningApps] }
-	private var openFinderInsidePock: 		 Bool { return Defaults[.openFinderInsidePock] }
+	private var shouldShowNotificationBadge: Bool {
+		let refreshInterval: NotificationBadgeRefreshRateKeys = Preferences[.notificationBadgeRefreshInterval]
+		return refreshInterval != .never
+	}
+	private var showOnlyRunningApps: Bool { return Preferences[.showOnlyRunningApps] }
+	private var openFinderInsidePock: Bool { return Preferences[.openFinderInsidePock] }
 	private var dockFolderRepository: DockFolderRepository?
 	private var keyValueObservers: [NSKeyValueObservation] = []
 	
@@ -34,7 +35,7 @@ class DockRepository {
 	private var runningItems: [DockItem] 	= []
 	private var persistentItems: [DockItem] = []
 	private var dockItems: [DockItem] {
-		if Defaults[.showOnlyRunningApps] {
+		if Preferences[.showOnlyRunningApps] {
 			return self.runningItems
 		}
 		return runningItems + defaultItems.filter({ runningItems.contains($0) == false })
@@ -62,7 +63,7 @@ class DockRepository {
 	/// Update notification badge refresh timer
 	@objc private func setupNotificationBadgeRefreshTimer() {
 		/// Get refresh rate
-		let refreshRate = Defaults[.notificationBadgeRefreshInterval]
+		let refreshRate: NotificationBadgeRefreshRateKeys = Preferences[.notificationBadgeRefreshInterval]
 		/// Invalidate last timer
 		self.notificationBadgeRefreshTimer?.invalidate()
 		/// Check if disabled
@@ -170,7 +171,7 @@ extension DockRepository {
 		/// Empty array
 		defaultItems.removeAll(where: { item in self.runningItems.contains(where: { $0.bundleIdentifier == item.bundleIdentifier }) == false })
 		/// Add Finder item, if needed
-		if Defaults[.hideFinder] {
+		if Preferences[.hideFinder] {
 			if let item = defaultItems.first(where: { $0.bundleIdentifier == Constants.kFinderIdentifier }) {
 				dockDelegate?.didUpdateDockItem(item, at: item.index, terminated: true, isDefaults: false)
 				defaultItems.removeAll(where: { $0.diffId == item.diffId })
@@ -181,7 +182,7 @@ extension DockRepository {
 			dockDelegate?.didUpdateDockItem(item, at: 0, terminated: false, isDefaults: true)
 		}
 		/// Only running apps
-		guard Defaults[.showOnlyRunningApps] == false else {
+		guard Preferences[.showOnlyRunningApps] == false else {
 			for (index, item) in runningItems.enumerated() {
 				dockDelegate?.didUpdateDockItem(item, at: index, terminated: false, isDefaults: false)
 			}
@@ -212,7 +213,7 @@ extension DockRepository {
 				continue
 			}
 			/// Create item
-			let item = DockItem(index + (Defaults[.hideFinder] ? 0 : 1),
+			let item = DockItem(index + (Preferences[.hideFinder] ? 0 : 1),
 								bundleIdentifier,
 								name: label,
                                 path: URL(string: urlString),
@@ -271,7 +272,7 @@ extension DockRepository {
 			dockDelegate?.didUpdatePersistentItem(removedItem.element, at: removedItem.offset, added: false)
 		}
 		/// Handle Trash
-		if Defaults[.hideTrash] {
+		if Preferences[.hideTrash] {
 			if let item = persistentItems.first(where: { $0.path?.absoluteString == Constants.trashPath }) {
 				dockDelegate?.didUpdatePersistentItem(item, at: item.index, added: false)
 				persistentItems.removeAll(where: { $0.diffId == item.diffId })
@@ -383,8 +384,8 @@ extension DockRepository {
 			return
 		}
 		for item in dockItems {
-			item.badge = PockDockHelper.sharedInstance()?.getBadgeCountForItem(withPath: item.path)
-                ?? PockDockHelper.sharedInstance()?.getBadgeCountForItem(withName: item.name)
+			item.badge = PockDockHelper().getBadgeCountForItem(withPath: item.path)
+                ?? PockDockHelper().getBadgeCountForItem(withName: item.name)
 		}
 		delegate.didUpdateBadge(for: self.dockItems)
 	}
@@ -494,7 +495,7 @@ extension DockRepository {
 	@discardableResult
 	private func activate(app: NSRunningApplication?) -> Bool {
 		guard let app = app else { return false }
-		let _windows = PockDockHelper.sharedInstance()?.getWindowsOfApp(app.processIdentifier) as NSArray?
+		let _windows = PockDockHelper().getWindowsOfApp(app.processIdentifier) as NSArray?
 		
 		if let windows = _windows as? [AppExposeItem], activateExpose(with: windows, app: app) {
 			return true
@@ -512,9 +513,9 @@ extension DockRepository {
 		guard windows.count > 0 else {
 			return false
 		}
-		let settings = Defaults[.appExposeSettings]
+		let settings: AppExposeSettings = Preferences[.appExposeSettings]
 		guard settings == .always || (settings == .ifNeeded && windows.count > 1) else {
-			PockDockHelper.sharedInstance()?.activate(windows.first, in: app)
+			PockDockHelper().activate(windows.first, in: app)
 			return false
 		}
 		openExpose(with: windows, for: app)

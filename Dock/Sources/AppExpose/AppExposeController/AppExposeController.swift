@@ -8,7 +8,6 @@
 
 import Foundation
 import PockKit
-import Defaults
 
 class AppExposeController: PKTouchBarMouseController {
     
@@ -132,7 +131,7 @@ extension AppExposeController: NSScrubberDataSource {
         let scaling: NSImageScaling = item.minimized ? .scaleProportionallyUpOrDown : .scaleAxesIndependently
         let view = scrubber.makeItem(withIdentifier: Constants.kAppExposeItemView, owner: self) as! AppExposeItemView
 		view.wid = item.wid
-        view.set(preview: icon, imageScaling: scaling)
+		view.set(preview: icon, imageScaling: scaling)
         view.set(name: item.name)
         view.set(minimized: item.minimized)
         return view
@@ -150,10 +149,11 @@ extension AppExposeController: NSScrubberDelegate {
         handleItem(elements[selectedIndex])
     }
 	private func handleItem(_ item: AppExposeItem) {
-		PockDockHelper.sharedInstance()?.activate(item, in: app)
+		let helper = PockDockHelper()
+		helper.activate(item, in: app)
 		if item.minimized {
-			PockDockHelper.sharedInstance()?.activate(item, in: app)
-		}else if PockDockHelper.sharedInstance()?.windowIsFrontmost(item.wid, forApp: app) ?? false {
+			helper.activate(item, in: app)
+		}else if helper.windowIsFrontmost(item.wid, forApp: app) {
 			// TODO: PockDockHelper.sharedInstance()?.minimizeWindowItem(item)
 		}
 		willClose(nil)

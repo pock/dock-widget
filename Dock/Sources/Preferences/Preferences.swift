@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Defaults
 
 extension String {
     var localized: String {
@@ -23,7 +22,7 @@ extension NSNotification.Name {
     static let shouldReloadDock                      = NSNotification.Name("shouldReloadDock")
     static let shouldReloadScrubbersLayout           = NSNotification.Name("shouldReloadScrubbersLayout")
     static let shouldReloadPersistentItems           = NSNotification.Name("shouldReloadPersistentItems")
-	static let shouldReloadScreenEdgeController 	 = NSNotification.Name("shouldReloadScreenEdgeController")
+    static let shouldReloadScreenEdgeController 	 = NSNotification.Name("shouldReloadScreenEdgeController")
 }
 
 enum NotificationBadgeRefreshRateKeys: Double, Codable, CaseIterable {
@@ -58,9 +57,9 @@ enum NotificationBadgeRefreshRateKeys: Double, Codable, CaseIterable {
     }
 }
 
-enum AppExposeSettings : String, Codable, CaseIterable {
+enum AppExposeSettings: String, Codable, CaseIterable {
     case never, ifNeeded, always
-
+    
     var title: String {
         switch self {
         case .never: return "Never".localized
@@ -70,15 +69,67 @@ enum AppExposeSettings : String, Codable, CaseIterable {
     }
 }
 
-extension Defaults.Keys {
-    static let notificationBadgeRefreshInterval = Defaults.Key<NotificationBadgeRefreshRateKeys>("notificationBadgeRefreshInterval", default: .tenSeconds)
-    static let appExposeSettings                = Defaults.Key<AppExposeSettings>("appExposeSettings", default: .ifNeeded)
-    static let itemSpacing                      = Defaults.Key<Int>("itemSpacing",             default: 8)
-	static let hideSystemDock				 	= Defaults.Key<Bool?>("hideSystemDock",	   	   default: nil)
-    static let hideFinder                       = Defaults.Key<Bool>("hideFinder",             default: false)
-    static let showOnlyRunningApps              = Defaults.Key<Bool>("showOnlyRunningApps",    default: false)
-	static let hideRunningIndicator				= Defaults.Key<Bool>("hideRunningIndicator",   default: false)
-    static let hideTrash                        = Defaults.Key<Bool>("hideTrash",              default: false)
-    static let hidePersistentItems              = Defaults.Key<Bool>("hidePersistentItems",    default: false)
-    static let openFinderInsidePock             = Defaults.Key<Bool>("openFinderInsidePock",   default: true)
+internal struct Preferences {
+    internal enum Keys: String {
+        case notificationBadgeRefreshInterval
+        case appExposeSettings
+        case itemSpacing
+        case hideSystemDock
+        case hideFinder
+        case showOnlyRunningApps
+        case hideRunningIndicator
+        case hideTrash
+        case hidePersistentItems
+        case openFinderInsidePock
+    }
+    static subscript<T>(_ key: Keys) -> T {
+        get {
+            guard let value = UserDefaults.standard.value(forKey: key.rawValue) as? T else {
+                if T.self == NotificationBadgeRefreshRateKeys.self, let raw = UserDefaults.standard.value(forKey: key.rawValue) as? Double {
+                    return (NotificationBadgeRefreshRateKeys(rawValue: raw) ?? .tenSeconds) as! T
+                }
+                if T.self == AppExposeSettings.self, let raw = UserDefaults.standard.value(forKey: key.rawValue) as? String {
+                    return (AppExposeSettings(rawValue: raw) ?? .ifNeeded) as! T
+                }
+                switch key {
+                case .notificationBadgeRefreshInterval:
+                    return NotificationBadgeRefreshRateKeys.tenSeconds as! T
+                case .appExposeSettings:
+                    return AppExposeSettings.ifNeeded as! T
+                case .itemSpacing:
+                    return CGFloat(8) as! T
+                case .hideSystemDock:
+                    return false as! T
+                case .hideFinder:
+                    return false as! T
+                case .showOnlyRunningApps:
+                    return false as! T
+                case .hideRunningIndicator:
+                    return false as! T
+                case .hideTrash:
+                    return false as! T
+                case .hidePersistentItems:
+                    return false as! T
+                case .openFinderInsidePock:
+                    return true as! T
+                }
+            }
+            return value
+        }
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: key.rawValue)
+        }
+    }
+    static func reset() {
+        Preferences[.notificationBadgeRefreshInterval] = 10
+        Preferences[.appExposeSettings] = "ifNeeded"
+        Preferences[.itemSpacing] = CGFloat(8)
+        Preferences[.hideSystemDock] = false
+        Preferences[.hideFinder] = false
+        Preferences[.showOnlyRunningApps] = false
+        Preferences[.hideRunningIndicator] = false
+        Preferences[.hideTrash] = false
+        Preferences[.hidePersistentItems] = false
+        Preferences[.openFinderInsidePock] = true
+    }
 }

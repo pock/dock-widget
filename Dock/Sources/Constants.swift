@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Defaults
 
 class Constants {
 	/// Known class names
@@ -22,11 +21,11 @@ class Constants {
     /// UI
     static let dockItemSize:            NSSize  = NSSize(width: 40, height: 30)
 	static var dockItemIconSize:        NSSize {
-		let val = Defaults[.hideRunningIndicator] ? 27 : 24
+		let val = Preferences[.hideRunningIndicator] ? 27 : 24
 		return NSSize(width: val, height: val)
 	}
 	static var dockItemDotSize:         NSSize {
-		return Defaults[.hideRunningIndicator] ? .zero : NSSize(width: 3,  height: 3)
+		return Preferences[.hideRunningIndicator] ? .zero : NSSize(width: 3,  height: 3)
 	}
     static let dockItemBadgeSize:       NSSize  = NSSize(width: 10, height: 10)
     static let dockItemCornerRadius:    CGFloat = 6

@@ -8,7 +8,6 @@
 
 import Foundation
 import PockKit
-import Defaults
 
 class DockFolderController: PKTouchBarMouseController {
     
